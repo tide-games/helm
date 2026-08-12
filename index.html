@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Helm — the tide turns the helm</title>
+<meta name="description" content="European roulette on a ship's helm — 37 pockets, one Bitcoin block turns it. Every bet on the felt faces the same 2.70%, and every spin verifies forever.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Helm — the tide turns the helm">
+<meta property="og:description" content="A ship's-wheel roulette: place your spread on the chart-table felt, the next block turns the helm. One number settles every bet — 2.70% on the whole felt, verifiable by anyone.">
+<meta property="og:url" content="https://tide-games.github.io/helm/">
+<meta property="og:image" content="https://tide-games.github.io/helm/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Helm — the tide turns the helm">
+<meta name="twitter:description" content="37 pockets, one block, the classic edge: 2.70% everywhere on the felt.">
+<meta name="twitter:image" content="https://tide-games.github.io/helm/og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E⎈%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --paper:#f7f1e3; --paper-2:#fdf9ee; --ink:#232e38; --ink-soft:#5c6a76;
+    --line:#d9cdb4; --accent:#1e6f8e; --gold:#c9a24b; --danger:#a63d2e;
+    --felt:#1d5c4c; --serif:"Iowan Old Style",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{
+    background:radial-gradient(1100px 500px at 50% -140px,var(--paper-2) 0%,var(--paper) 60%),var(--paper);
+    color:var(--ink); font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+    min-height:100vh; padding-bottom:44px;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:14px 16px 40px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:6px 2px 10px}
+  h1{margin:0;font:800 30px/1 var(--serif);letter-spacing:.04em}
+  .tagline{color:var(--ink-soft);font-style:italic;font-family:var(--serif)}
+  .spacer{flex:1}
+  .chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;
+    background:#fff;border:1px solid var(--line);font-weight:600;white-space:nowrap;
+    font-variant-numeric:tabular-nums;box-shadow:0 1px 2px rgba(35,46,56,.06)}
+  .chip small{font-weight:500;color:var(--ink-soft)}
+  .chip.purse{border-color:#dcbf74;background:#fdf8ea}
+  button.chip{cursor:pointer;font:inherit;font-weight:600;color:var(--ink)}
+  button.chip:hover{border-color:var(--accent)}
+  .board-frame{position:relative;border-radius:16px;overflow:hidden;
+    border:1px solid var(--line);box-shadow:0 10px 30px -18px rgba(35,46,56,.5);background:#123f34}
+  canvas{display:block;width:100%;height:auto}
+  #sea{cursor:crosshair}
+  .cols{display:grid;grid-template-columns:1fr 340px;gap:14px;margin-top:14px}
+  @media(max-width:900px){.cols{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+    box-shadow:0 1px 3px rgba(35,46,56,.07)}
+  .card h2{margin:0 0 10px;font:700 13px/1 system-ui;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  .card h2 .right{float:right;font-weight:600;letter-spacing:0;text-transform:none}
+  .mode{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px}
+  .mode button{flex:1;font:600 14px system-ui;padding:8px 0;border:0;background:#fff;cursor:pointer;color:var(--ink-soft)}
+  .mode button.on{background:var(--accent);color:#fff}
+  .denoms{display:flex;gap:7px;margin-bottom:10px}
+  .denom{flex:1;border:2px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;
+    font:800 14px system-ui;padding:9px 0;color:var(--ink)}
+  .denom.on{border-color:var(--gold);background:#fdf8ea;box-shadow:0 0 0 3px rgba(201,162,75,.25)}
+  .denom.eraser.on{border-color:var(--danger);box-shadow:0 0 0 3px rgba(166,61,46,.2)}
+  .statline{display:flex;justify-content:space-between;background:#eef6fa;border:1px solid #bcd7e4;
+    border-radius:9px;padding:8px 11px;font-size:13.5px;margin-bottom:8px}
+  .statline b{font-variant-numeric:tabular-nums}
+  .rowbtns{display:flex;gap:7px;margin-bottom:10px}
+  .rowbtns button{flex:1;font:600 13px system-ui;padding:8px 0;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer}
+  .rowbtns button:hover{border-color:var(--accent)}
+  #spin-btn{width:100%;font:700 16px system-ui;padding:12px 0;border:0;border-radius:11px;cursor:pointer;
+    color:#fff;background:linear-gradient(#2a86a8,var(--accent));box-shadow:0 6px 14px -7px rgba(30,111,142,.6)}
+  #spin-btn:hover{filter:brightness(1.06)}
+  #spin-btn[disabled]{opacity:.55;cursor:default;filter:none}
+  .modenote{color:var(--ink-soft);font-size:12.5px;margin-top:8px;line-height:1.5}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th{font:700 11px system-ui;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:4px 8px}
+  td{padding:6px 8px;border-top:1px solid #f0e9d8;font-variant-numeric:tabular-nums}
+  .net-w{color:#1c7a3d;font-weight:700}.net-l{color:var(--danger);font-weight:700}
+  .num-red{color:#c0392b;font-weight:800}.num-black{color:#232e38;font-weight:800}.num-zero{color:#1e8449;font-weight:800}
+  .proof a{color:var(--accent);text-decoration:none}.proof a:hover{text-decoration:underline}
+  .tag{font-size:11px;padding:1.5px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink-soft)}
+  footer{margin-top:18px;color:var(--ink-soft);font-size:13px;line-height:1.6}
+  footer a{color:var(--accent)}
+  #banner{position:absolute;left:0;right:0;top:12px;display:none;align-items:flex-start;justify-content:center;pointer-events:none}
+  #banner .inner{background:rgba(247,241,227,.96);border:1px solid var(--line);border-radius:14px;
+    padding:14px 24px;text-align:center;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);max-width:80%}
+  #banner .head{font:800 21px var(--serif)}
+  #banner .sub{color:var(--ink-soft);margin-top:3px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>⎈ THE HELM</h1>
+    <span class="tagline">the tide turns the helm</span>
+    <span class="spacer"></span>
+    <span class="chip" id="tide-chip" title="Bitcoin testnet4 tip">〜 <small>tide</small> <span id="tide-height">—</span></span>
+    <span class="chip purse">◉ <small>purse</small> <span id="purse">0</span></span>
+    <button class="chip" id="sound-btn" aria-label="toggle sound"><span id="sound-ic">🔊</span></button>
+  </header>
+
+  <div class="board-frame">
+    <canvas id="sea" width="1028" height="520"></canvas>
+    <div id="banner"><div class="inner"><div class="head" id="banner-head"></div><div class="sub" id="banner-sub"></div></div></div>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h2>The Log <span class="right" id="spin-count"></span></h2>
+      <table>
+        <thead><tr><th>Spin</th><th>Number</th><th>Bets</th><th>Staked</th><th>Net</th><th>Proof</th></tr></thead>
+        <tbody id="log-body"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>The chart table</h2>
+      <div class="mode" id="mode">
+        <button id="m-practice" class="on">◉ Practice</button>
+        <button id="m-tide">〜 The Tide</button>
+      </div>
+      <div class="denoms" id="denoms">
+        <button class="denom on" data-d="1">1</button>
+        <button class="denom" data-d="5">5</button>
+        <button class="denom" data-d="25">25</button>
+        <button class="denom" data-d="100">100</button>
+        <button class="denom eraser" data-d="0" title="lift chips off a spot">⌫</button>
+      </div>
+      <div class="statline"><span>On the felt</span><b id="staked">0 across 0 bets</b></div>
+      <div class="rowbtns">
+        <button id="undo-btn">Undo</button>
+        <button id="clear-btn">Clear the felt</button>
+        <button id="rebet-btn">Re-bet</button>
+      </div>
+      <button id="spin-btn">Turn the helm</button>
+      <p class="modenote" id="modenote"></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>European single-zero: the spin is <code>blockSeed mod 37</code>, and every one of the felt's 155
+    legal bets returns exactly 36/37 in expectation — <b>2.70%, identical across the whole table</b>,
+    enumerated in <a href="tests.js">tests</a> over the maths in <a href="helm.js">helm.js</a>.
+    Click cell centres for straights, edges for splits, crossings for corners, the row ends for streets.
+    Practice money; the tide spins on the next block · a <a href="https://tide-games.github.io/">tide-games</a> boat.</p>
+  </footer>
+</div>
+
+<script type="module">
+import { POCKETS, WHEEL, REDS, colorOf, spinFromSeed, covers, PAYS, settleSpin } from './helm.js';
+
+/* ================================================================ state */
+const LS={purse:'helm-purse',log:'helm-log',n:'helm-n',sound:'helm-sound',pending:'helm-pending',last:'helm-lastbets'};
+const load=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v;}catch{return d;}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const $=(id)=>document.getElementById(id);
+const MEMPOOL='https://mempool.space/testnet4/api';
+const fmt=(n)=>Number(n).toLocaleString('en-US');
+const MINUS='−';
+
+let purse=load(LS.purse,1000);
+let spinN=load(LS.n,0);
+let log=load(LS.log,[]);
+let pending=load(LS.pending,null);   // {height, mark, bets, placedAt}
+let lastBets=load(LS.last,null);
+let soundOn=load(LS.sound,true);
+let mode='practice';
+let denom=1;                          // 0 = eraser
+let bets=[];                          // [{type, sel, stake}] — the live felt
+let spinning=false;
+
+const randHex=(n)=>Array.from(crypto.getRandomValues(new Uint8Array(n)),(b)=>b.toString(16).padStart(2,'0')).join('');
+async function sha256hex(s){
+  const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(d),(b)=>b.toString(16).padStart(2,'0')).join('');
+}
+
+/* ================================================================ sound */
+let _ac=null; const ac=()=>_ac||(_ac=new (window.AudioContext||window.webkitAudioContext)());
+function env(g,t,a,d,v){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(0.001,t+a+d);}
+function tone(f,vol=.1,dur=.08,type='sine'){if(!soundOn)return;const c=ac(),t=c.currentTime;
+  const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;
+  o.connect(g);g.connect(c.destination);env(g,t,.003,dur,vol);o.start(t);o.stop(t+dur+.05);}
+const tick=()=>tone(1400,.05,.03,'square');
+const clack=()=>tone(700,.1,.05,'triangle');
+const chipSnd=()=>tone(900,.07,.05);
+function winChime(){if(!soundOn)return;[659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.13,.25),i*80));}
+function bigWin(){if(!soundOn)return;[523,659,784,1047,1318,1568].forEach((f,i)=>setTimeout(()=>tone(f,.14,.3),i*85));}
+
+/* ================================================================ geometry */
+const cv=$('sea'),ctx=cv.getContext('2d');
+const W=1028,H=520;
+// the helm occupies the left square, the felt the right
+const HX=252,HY=252,HR=212;          // helm centre + radius
+// felt grid
+const FX=520,FY=54;                   // grid top-left (zero row above)
+const CW=94,CH=32;                    // cell size (3 cols × 12 rows)
+const GRIDW=CW*3;
+
+let anim=null;    // spin animation {number,t0,dur,fromAngle,turns,ballBounces,settled}
+let lastNumber=load('helm-lastnum'==='x'?'':'helm-lastnum',null);
+let floaters=[];
+let hoverZone=null;
+let winFlash=null; // {number, zones:[keys], t0}
+
+const POCKET_ANG=(i)=>i*2*Math.PI/POCKETS; // index on WHEEL
+
+/* ---------------- felt zones ----------------
+   Zones: {kind:'straight'|'split'|'corner'|'street'|'sixline'|'zero'|'dozen'|'column'|'outside',
+           type, sel, x, y} — snap targets for clicks & chip anchors. */
+const ZONES=[];
+(function buildZones(){
+  const cellX=(c)=>FX+(c-1)*CW+CW/2;          // c: 1..3
+  const cellY=(r)=>FY+ (r-1)*CH+CH/2 + CH;    // rows shifted below zero row
+  // zero spans the grid width above row 1
+  ZONES.push({type:'straight',sel:[0],x:FX+GRIDW/2,y:FY+CH/2});
+  for(let n=1;n<=36;n++){
+    const r=Math.ceil(n/3), c=((n-1)%3)+1;
+    ZONES.push({type:'straight',sel:[n],x:cellX(c),y:cellY(r)});
+    if(c<3) ZONES.push({type:'split',sel:[n,n+1],x:cellX(c)+CW/2,y:cellY(r)});
+    if(r<12) ZONES.push({type:'split',sel:[n,n+3],x:cellX(c),y:cellY(r)+CH/2});
+    if(c<3&&r<12) ZONES.push({type:'corner',sel:[n,n+1,n+3,n+4],x:cellX(c)+CW/2,y:cellY(r)+CH/2});
+  }
+  for(let r=1;r<=12;r++){
+    ZONES.push({type:'street',sel:[3*r-2,3*r-1,3*r],x:FX-14,y:cellY(r)});
+    if(r<12) ZONES.push({type:'sixline',sel:[3*r-2,3*r-1,3*r,3*r+1,3*r+2,3*r+3],x:FX-14,y:cellY(r)+CH/2});
+  }
+  // zero splits + basket
+  ZONES.push({type:'split',sel:[0,1],x:cellX(1),y:FY+CH});
+  ZONES.push({type:'split',sel:[0,2],x:cellX(2),y:FY+CH});
+  ZONES.push({type:'split',sel:[0,3],x:cellX(3),y:FY+CH});
+  ZONES.push({type:'corner',sel:[0,1,2,3],x:FX+GRIDW/2+CW,y:FY+CH});
+  // dozens (right rail)
+  for(let d=1;d<=3;d++) ZONES.push({type:'dozen',sel:[d],x:FX+GRIDW+34,y:FY+CH+(d-1)*4*CH+2*CH});
+  // columns (below grid)
+  for(let c=1;c<=3;c++) ZONES.push({type:'column',sel:[c],x:cellX(c),y:FY+CH+12*CH+18});
+  // evens rail (far right)
+  const evens=[['low','1–18'],['even','EVEN'],['red','RED'],['black','BLACK'],['odd','ODD'],['high','19–36']];
+  evens.forEach(([t],i)=>ZONES.push({type:t,sel:[1],x:FX+GRIDW+94,y:FY+CH+i*2*CH+CH}));
+})();
+function zoneAt(x,y){
+  let best=null,bd=1e9;
+  for(const z of ZONES){
+    const d=(z.x-x)**2+(z.y-y)**2;
+    if(d<bd){bd=d;best=z;}
+  }
+  return bd<=15*15?best:null;
+}
+const zoneKey=(z)=>z.type+':'+z.sel.join('-');
+
+/* ================================================================ drawing */
+function drawFelt(now){
+  // table
+  ctx.fillStyle='#1d5c4c';
+  ctx.fillRect(FX-46,FY-16,GRIDW+46+140,CH*13+56);
+  // rope border around the chart table
+  ctx.strokeStyle='rgba(201,162,75,.5)';ctx.lineWidth=3;ctx.setLineDash([7,4]);
+  ctx.strokeRect(FX-46,FY-16,GRIDW+46+140,CH*13+56);
+  ctx.setLineDash([]);
+  const cellY=(r)=>FY+(r-1)*CH+CH;
+  // zero
+  ctx.fillStyle='#1e8449';
+  roundedCell(FX,FY,GRIDW,CH);
+  numText('0','#fff',FX+GRIDW/2,FY+CH/2);
+  // number cells
+  for(let n=1;n<=36;n++){
+    const r=Math.ceil(n/3),c=((n-1)%3)+1;
+    const x=FX+(c-1)*CW,y=cellY(r);
+    ctx.fillStyle=REDS.has(n)?'#a93226':'#212a33';
+    roundedCell(x,y,CW,CH);
+    ctx.fillStyle='rgba(255,255,255,.06)';
+    ctx.fillRect(x+2,y+2,CW-4,CH/2-2);
+    numText(String(n),'#f5efe0',x+CW/2,y+CH/2);
+  }
+  // street/sixline rail with tick affordances
+  ctx.fillStyle='rgba(240,230,200,.1)';
+  ctx.fillRect(FX-28,cellY(1),24,CH*12);
+  ctx.fillStyle='rgba(240,230,200,.45)';
+  for(let r=1;r<=12;r++){ctx.beginPath();ctx.arc(FX-16,cellY(r)+CH/2,2.5,0,7);ctx.fill();}
+  // dozens
+  const dz=['1st 12','2nd 12','3rd 12'];
+  for(let d=0;d<3;d++){
+    const y=cellY(1)+d*4*CH;
+    ctx.fillStyle='rgba(240,230,200,.12)';
+    roundedCell(FX+GRIDW+6,y,56,4*CH-2);
+    ctx.save();ctx.translate(FX+GRIDW+34,y+2*CH);ctx.rotate(-Math.PI/2);
+    ctx.fillStyle='#f5efe0';ctx.font='700 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(dz[d],0,0);ctx.restore();
+  }
+  // evens rail
+  const evens=[['low','1–18'],['even','EVEN'],['red','RED'],['black','BLACK'],['odd','ODD'],['high','19–36']];
+  evens.forEach(([t,lbl],i)=>{
+    const y=cellY(1)+i*2*CH;
+    ctx.fillStyle=t==='red'?'rgba(169,50,38,.85)':t==='black'?'rgba(25,32,40,.9)':'rgba(240,230,200,.12)';
+    roundedCell(FX+GRIDW+66,y,56,2*CH-2);
+    ctx.save();ctx.translate(FX+GRIDW+94,y+CH);ctx.rotate(-Math.PI/2);
+    ctx.fillStyle='#f5efe0';ctx.font='700 12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(lbl,0,0);ctx.restore();
+  });
+  // columns
+  for(let c=0;c<3;c++){
+    const x=FX+c*CW,y=cellY(12)+CH+4;
+    ctx.fillStyle='rgba(240,230,200,.12)';
+    roundedCell(x,y,CW-2,26);
+    ctx.fillStyle='#f5efe0';ctx.font='700 12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('2:1',x+CW/2,y+13);ctx.textBaseline='alphabetic';
+  }
+  // hover highlight: show what the click would bet
+  if(hoverZone&&!spinning){
+    const c=covers(hoverZone.type,hoverZone.sel);
+    if(c){
+      ctx.fillStyle='rgba(255,225,130,.28)';
+      for(const n of c){
+        if(n===0){ctx.fillRect(FX,FY,GRIDW,CH);continue;}
+        const r=Math.ceil(n/3),cc=((n-1)%3)+1;
+        ctx.fillRect(FX+(cc-1)*CW,cellY(r),CW,CH);
+      }
+      ctx.beginPath();ctx.arc(hoverZone.x,hoverZone.y,7,0,7);
+      ctx.fillStyle='rgba(255,225,130,.85)';ctx.fill();
+    }
+  }
+  // the win flash: pulse the landed number and every winning zone
+  if(winFlash&&now-winFlash.t0<3000){
+    const p=0.5+0.5*Math.sin(now/160);
+    const n=winFlash.number;
+    ctx.save();
+    ctx.fillStyle=`rgba(255,225,130,${0.25+0.35*p})`;
+    if(n===0)ctx.fillRect(FX,FY,GRIDW,CH);
+    else{const r=Math.ceil(n/3),c=((n-1)%3)+1;ctx.fillRect(FX+(c-1)*CW,FY+(r-1)*CH+CH,CW,CH);}
+    ctx.strokeStyle=`rgba(255,225,130,${0.5+0.5*p})`;ctx.lineWidth=3;
+    if(n===0)ctx.strokeRect(FX+1,FY+1,GRIDW-2,CH-2);
+    else{const r=Math.ceil(n/3),c=((n-1)%3)+1;ctx.strokeRect(FX+(c-1)*CW+1,FY+(r-1)*CH+CH+1,CW-2,CH-2);}
+    for(const k of winFlash.zones){
+      const z=ZONES.find(z=>zoneKey(z)===k);
+      if(!z)continue;
+      ctx.beginPath();ctx.arc(z.x,z.y,13+p*3,0,7);
+      ctx.strokeStyle=`rgba(182,240,192,${0.6+0.4*p})`;ctx.lineWidth=2.5;ctx.stroke();
+    }
+    ctx.restore();
+  }
+  // chips on the felt
+  const stacks={};
+  bets.forEach((b,i)=>{const z=ZONES.find(z=>zoneKey(z)===b.zone);if(!z)return;
+    (stacks[b.zone]??={z,total:0}).total+=b.stake;});
+  for(const k in stacks){
+    const {z,total}=stacks[k];
+    drawChip(z.x,z.y,total);
+  }
+}
+function roundedCell(x,y,w,h){ctx.beginPath();ctx.roundRect(x+1,y+1,w-2,h-2,4);ctx.fill();
+  ctx.strokeStyle='rgba(240,230,200,.35)';ctx.lineWidth=1;ctx.stroke();}
+function numText(t,fill,x,y){ctx.fillStyle=fill;ctx.font='700 14px system-ui';
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,x,y);ctx.textBaseline='alphabetic';}
+function drawChip(x,y,total){
+  ctx.save();
+  const col= total>=100?'#3d3568': total>=25?'#1d6a50': total>=5?'#a93226':'#3a6ea5';
+  ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(x+1.5,y+3,11,10,0,0,7);ctx.fill();
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,11,0,7);ctx.fill();
+  ctx.strokeStyle='#f5efe0';ctx.lineWidth=2;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.arc(x,y,8,0,7);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fff';ctx.font='800 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(total>999?(Math.round(total/100)/10+'k'):String(total),x,y);
+  ctx.textBaseline='alphabetic';ctx.restore();
+}
+
+function drawHelm(now){
+  const rot=wheelAngle(now);
+  ctx.save();ctx.translate(HX,HY);
+  // water shadow
+  ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(4,10,HR+8,HR+2,0,0,7);ctx.fill();
+  // spokes + handles (the helm!)
+  ctx.save();ctx.rotate(rot);
+  for(let i=0;i<8;i++){
+    ctx.save();ctx.rotate(i*Math.PI/4);
+    ctx.fillStyle='#5c3a1e';
+    ctx.fillRect(-7,-HR-26,14,30);                    // handle
+    ctx.beginPath();ctx.arc(0,-HR-28,8,0,7);ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+  // outer wooden ring
+  const wood=ctx.createRadialGradient(0,0,HR-38,0,0,HR+6);
+  wood.addColorStop(0,'#8a5a2e');wood.addColorStop(.5,'#6d4423');wood.addColorStop(1,'#4a2c14');
+  ctx.fillStyle=wood;ctx.beginPath();ctx.arc(0,0,HR+4,0,7);ctx.arc(0,0,HR-34,0,7,true);ctx.fill();
+  ctx.strokeStyle='#2e1a0a';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(0,0,HR+4,0,7);ctx.stroke();
+  ctx.beginPath();ctx.arc(0,0,HR-34,0,7);ctx.stroke();
+  // pocket ring
+  ctx.save();ctx.rotate(rot);
+  for(let i=0;i<POCKETS;i++){
+    const n=WHEEL[i];
+    const a0=POCKET_ANG(i)-Math.PI/POCKETS, a1=POCKET_ANG(i)+Math.PI/POCKETS;
+    ctx.fillStyle=n===0?'#1e8449':REDS.has(n)?'#a93226':'#1c242e';
+    ctx.beginPath();ctx.arc(0,0,HR-36,a0-Math.PI/2,a1-Math.PI/2);
+    ctx.arc(0,0,HR-86,a1-Math.PI/2,a0-Math.PI/2,true);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(201,162,75,.55)';ctx.lineWidth=1;ctx.stroke();
+    // number
+    ctx.save();ctx.rotate(POCKET_ANG(i));
+    ctx.fillStyle='#f5efe0';ctx.font='800 15px system-ui';ctx.textAlign='center';
+    ctx.fillText(String(n),0,-HR+55);
+    ctx.restore();
+  }
+  ctx.restore();
+  // brass hub
+  const brass=ctx.createRadialGradient(-8,-10,4,0,0,HR-88);
+  brass.addColorStop(0,'#f0d9a0');brass.addColorStop(.5,'#c9a24b');brass.addColorStop(1,'#8a6508');
+  ctx.fillStyle=brass;ctx.beginPath();ctx.arc(0,0,HR-88,0,7);ctx.fill();
+  ctx.strokeStyle='#5c4408';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,HR-88,0,7);ctx.stroke();
+  // last / current number in the hub
+  const show=anim&&anim.landed?anim.number:(anim?null:lastNumber);
+  ctx.textAlign='center';
+  if(show!=null){
+    ctx.fillStyle=show===0?'#1e8449':REDS.has(show)?'#a93226':'#1c242e';
+    ctx.beginPath();ctx.arc(0,0,44,0,7);ctx.fill();
+    ctx.strokeStyle='rgba(245,239,224,.7)';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#f5efe0';ctx.font='800 34px system-ui';ctx.textBaseline='middle';
+    ctx.fillText(String(show),0,1);ctx.textBaseline='alphabetic';
+  }else{
+    // engraved compass rose
+    ctx.save();ctx.strokeStyle='rgba(92,68,8,.5)';ctx.lineWidth=1.5;
+    for(let i=0;i<8;i++){ctx.save();ctx.rotate(i*Math.PI/4);
+      ctx.beginPath();ctx.moveTo(0,-64);ctx.lineTo(6,-14);ctx.lineTo(0,-8);ctx.lineTo(-6,-14);ctx.closePath();
+      ctx.fillStyle=i%2?'rgba(92,68,8,.28)':'rgba(92,68,8,.45)';ctx.fill();ctx.stroke();ctx.restore();}
+    ctx.beginPath();ctx.arc(0,0,70,0,7);ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle='rgba(60,45,10,.75)';ctx.font='italic 15px Georgia,serif';ctx.textBaseline='middle';
+    ctx.fillText(anim?'…':'the tide waits',0,86);ctx.textBaseline='alphabetic';
+  }
+  // the ball (a pearl)
+  const B=ballPos(now);
+  if(B){
+    ctx.fillStyle='rgba(255,255,255,.5)';
+    ctx.beginPath();ctx.arc(B.x,B.y,4,0,7);ctx.fill();
+    const pg=ctx.createRadialGradient(B.x-2,B.y-3,1,B.x,B.y,8);
+    pg.addColorStop(0,'#fff');pg.addColorStop(.6,'#efe8f8');pg.addColorStop(1,'#bdb2d6');
+    ctx.fillStyle=pg;ctx.beginPath();ctx.arc(B.x,B.y,7.5,0,7);ctx.fill();
+    ctx.strokeStyle='rgba(60,50,80,.4)';ctx.lineWidth=1;ctx.stroke();
+  }
+  ctx.restore();
+  // pointer at the top
+  ctx.fillStyle='#c9a24b';
+  ctx.beginPath();ctx.moveTo(HX-13,HY-HR-24);ctx.lineTo(HX+13,HY-HR-24);ctx.lineTo(HX,HY-HR+4);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#5c4408';ctx.lineWidth=1.5;ctx.stroke();
+}
+
+/* spin choreography — wall-clock, deterministic, ends with the winning
+   pocket under the pointer and the pearl nested in it */
+const SPIN_MS=7600;
+function targetAngle(number){
+  const idx=WHEEL.indexOf(number);
+  return -POCKET_ANG(idx);            // pocket idx at top (pointer) when wheel rotation = this
+}
+function wheelAngle(now){
+  if(!anim) return lastNumber!=null?targetAngle(lastNumber):0;
+  const e=Math.min(1,(now-anim.t0)/SPIN_MS);
+  const ease=1-Math.pow(1-e,3.6);
+  return anim.fromAngle+(anim.turns*2*Math.PI+anim.delta)*ease;
+}
+function ballPos(now){
+  if(!anim) return lastNumber!=null?pocketXY(lastNumber,wheelAngle(now)):null;
+  const e=Math.min(1,(now-anim.t0)/SPIN_MS);
+  if(e>=1) return pocketXY(anim.number,wheelAngle(now));
+  // phase 1 (0-.55): ball orbits the outer rim opposite the wheel
+  // phase 2 (.55-.85): spirals in with choreographed bounces
+  // phase 3 (.85-1): rides its pocket home
+  const rot=wheelAngle(now);
+  if(e<0.5){
+    const be=e/0.5;
+    const ang=anim.ballFrom - (anim.ballTurns*2*Math.PI)*(1-Math.pow(1-be,2.2));
+    return {x:Math.cos(ang-Math.PI/2)*(HR-16),y:Math.sin(ang-Math.PI/2)*(HR-16)};
+  }
+  const pk=pocketAngleWorld(anim.number,rot);
+  if(e<0.88){
+    const be=(e-0.5)/0.38;
+    // bounce radius wobbles inward, angle converges on the pocket
+    const wob=Math.abs(Math.sin(be*Math.PI*anim.bounces))*(1-be)*34;
+    const r=HR-16-(be*(HR-16-(HR-60)))+wob;
+    const ang=anim.ballDropAng+(pk-anim.ballDropAng)*be;
+    return {x:Math.cos(ang-Math.PI/2)*r,y:Math.sin(ang-Math.PI/2)*r};
+  }
+  return pocketXY(anim.number,rot);
+}
+function pocketAngleWorld(number,rot){ return rot+POCKET_ANG(WHEEL.indexOf(number)); }
+function pocketXY(number,rot){
+  const a=pocketAngleWorld(number,rot);
+  return {x:Math.cos(a-Math.PI/2)*(HR-61),y:Math.sin(a-Math.PI/2)*(HR-61)};
+}
+
+let lastTickAng=0;
+function frame(){
+  const now=performance.now();
+  try{
+    ctx.clearRect(0,0,W,H);
+    // backdrop
+    const bg=ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#16493c');bg.addColorStop(1,'#0d3129');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(255,255,255,.04)';
+    for(let i=0;i<30;i++)ctx.fillRect((i*167)%W,(i*97)%H,2,2);
+    drawFelt(now);
+    drawHelm(now);
+    // floaters
+    floaters=floaters.filter(f=>now-f.t0<1100);
+    for(const f of floaters){
+      const e=(now-f.t0)/1100;
+      ctx.globalAlpha=1-e;
+      ctx.fillStyle=f.color;ctx.font=(f.big?'800 22px':'800 15px')+' system-ui';ctx.textAlign='center';
+      ctx.fillText(f.text,f.x,f.y-e*36);
+      ctx.globalAlpha=1;
+    }
+    if(anim&&!anim.landed){
+      const e=(now-anim.t0)/SPIN_MS;
+      // pocket ticks while the ball rides the rim
+      if(e<0.88){const a=wheelAngle(now);if(Math.abs(a-lastTickAng)>2*Math.PI/POCKETS){lastTickAng=a;tick();}}
+      if(e>=1){anim.landed=true;landSpin();}
+    }
+  }catch(err){console.log('[helm] frame died:',err.message);}
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ================================================================ flow */
+function startAnim(number){
+  const from=lastNumber!=null?targetAngle(lastNumber):0;
+  let delta=targetAngle(number)-from;
+  while(delta<=0)delta+=2*Math.PI;
+  anim={number,t0:performance.now(),fromAngle:from,turns:4,delta,
+    ballFrom:Math.random()*7,ballTurns:6+Math.random()*2,
+    ballDropAng:Math.random()*7,bounces:3+(number%3),landed:false};
+  clack();
+  setTimeout(()=>{if(anim&&!anim.landed){anim.landed=true;landSpin();}},SPIN_MS+800); // watchdog
+}
+let pendingSettle=null;
+async function doSpin(seedHex,tideInfo){
+  spinning=true;renderControls();
+  const out=settleSpin(bets,seedHex);        // books before theatre
+  purse+=out.totalReturn;save(LS.purse,purse);
+  spinN++;save(LS.n,spinN);
+  log.unshift({n:spinN,num:out.number,color:out.color,betCount:bets.length,
+    staked:out.totalStake,delta:out.delta,mode:tideInfo?'tide':'practice',
+    height:tideInfo?.height??null,mark:tideInfo?.mark??null,at:Date.now()});
+  log=log.slice(0,60);save(LS.log,log);
+  lastBets=bets.map(b=>({...b}));save(LS.last,lastBets);
+  pendingSettle=out;
+  startAnim(out.number);
+}
+function landSpin(){
+  const out=pendingSettle;pendingSettle=null;
+  if(!out){spinning=false;renderControls();return;}
+  lastNumber=out.number;save('helm-lastnum',lastNumber);
+  winFlash={number:out.number,zones:out.results.filter(r=>r.win).map(r=>r.zone),t0:performance.now()};
+  const wins=out.results.filter(r=>r.win);
+  if(out.delta>0){ (out.delta>=out.totalStake*5?bigWin:winChime)(); }
+  else tone(220,.1,.2,'triangle');
+  floaters.push({text:(out.delta>=0?'+':MINUS)+fmt(Math.abs(out.delta)),
+    x:HX,y:HY-HR-26,color:out.delta>=0?'#b6f0c0':'#ffb9a6',t0:performance.now(),big:true});
+  showBanner(
+    `<span class="num-${out.color}">${out.number}</span> ${out.color==='zero'?'· the house pocket':'· '+out.color}`,
+    wins.length?`${wins.length} of ${out.results.length} bets land · net <b>${out.delta>=0?'+':MINUS}${fmt(Math.abs(out.delta))}</b>`
+               :`the felt clears · net <b>${MINUS}${fmt(Math.abs(out.delta))}</b>`);
+  bets=[];
+  spinning=false;
+  renderAll();
+  setTimeout(hideBanner,3600);
+}
+async function practiceSpin(){
+  const seed=await sha256hex('practice|'+randHex(16));
+  await doSpin(seed);
+}
+/* ---------------- the tide ---------------- */
+let tipHeight=0,tipAt=0;
+async function fetchTip(){
+  if(Date.now()-tipAt<20000)return tipHeight;
+  const r=await fetch(MEMPOOL+'/blocks/tip/height');
+  if(!r.ok)throw new Error('tide '+r.status);
+  tipHeight=Number((await r.text()).trim());tipAt=Date.now();
+  $('tide-height').textContent=fmt(tipHeight);
+  return tipHeight;
+}
+const blockHashCache={};
+async function hashAtHeight(h,{cacheOk=false}={}){
+  if(cacheOk&&blockHashCache[h])return blockHashCache[h];
+  const r=await fetch(MEMPOOL+'/block-height/'+h);
+  if(r.status===404)return null;
+  if(!r.ok)throw new Error('block '+r.status);
+  const hash=(await r.text()).trim();
+  if(cacheOk)blockHashCache[h]=hash;
+  return hash;
+}
+async function tideSpin(){
+  const tip=await fetchTip();
+  const height=tip+1;
+  const mark=randHex(16);
+  pending={height,mark,bets:bets.map(b=>({...b})),placedAt:Date.now()};
+  save(LS.pending,pending);
+  bets=[];
+  renderAll();
+  showBanner('The helm waits on the tide',`It turns on block <b>${fmt(height)}</b> — about ten minutes. Your spread rides with it.`);
+  watchTide();
+}
+let tideTimer=null;
+async function trySettleTide(){
+  if(!pending)return false;
+  tipAt=0;const tip=await fetchTip();
+  if(tip<pending.height+1)return false;   // 1 conf — the reorg lesson
+  const hash=await hashAtHeight(pending.height,{cacheOk:true});
+  if(!hash)return false;
+  if(tideTimer){clearInterval(tideTimer);tideTimer=null;}
+  const p=pending;pending=null;save(LS.pending,null);
+  const seed=await sha256hex(hash+'|'+p.mark);
+  bets=p.bets;
+  await doSpin(seed,{height:p.height,mark:p.mark,blockHash:hash});
+  return true;
+}
+function watchTide(){
+  if(tideTimer||!pending)return;
+  tideTimer=setInterval(()=>{trySettleTide().catch(()=>{});fetchTip().catch(()=>{});},30000);
+  trySettleTide().catch(()=>{});
+}
+
+/* ================================================================ UI */
+const totalStaked=()=>bets.reduce((a,b)=>a+b.stake,0);
+function renderHeader(){$('purse').textContent=fmt(purse);$('sound-ic').textContent=soundOn?'🔊':'🔇';}
+function renderControls(){
+  $('staked').textContent=`${fmt(totalStaked())} across ${bets.length} bet${bets.length===1?'':'s'}`;
+  const btn=$('spin-btn');
+  btn.disabled=spinning||!bets.length||(mode==='tide'&&!!pending);
+  btn.textContent=mode==='tide'?(pending?'The helm is turning on the tide…':'Turn on the next block'):'Turn the helm';
+  $('modenote').textContent=mode==='tide'
+    ?'Your whole spread rides one block: the next testnet4 block turns the helm — nobody knows the number yet.'
+    :'Practice spins are seeded locally and turn at once — pure fun, not provable.';
+}
+function renderLog(){
+  const tb=$('log-body');tb.innerHTML='';
+  $('spin-count').textContent=log.length?`${log.length} spin${log.length===1?'':'s'}`:'';
+  if(!log.length){tb.innerHTML='<tr><td colspan="6" style="color:var(--ink-soft)"><i>No spins yet — the helm is lashed.</i></td></tr>';return;}
+  for(const e of log){
+    const tr=document.createElement('tr');
+    const proof=e.mode==='tide'
+      ?`<a href="https://mempool.space/testnet4/block-height/${e.height}" target="_blank" rel="noopener">block ${fmt(e.height)}</a> · seed ✓`
+      :'<span class="tag">practice</span>';
+    tr.innerHTML=`<td>#${e.n}</td><td class="num-${e.color}">${e.num}</td><td>${e.betCount}</td>
+      <td>${fmt(e.staked)}</td>
+      <td class="${e.delta>=0?'net-w':'net-l'}">${e.delta>=0?'+':MINUS}${fmt(Math.abs(e.delta))}</td>
+      <td class="proof">${proof}</td>`;
+    tb.appendChild(tr);
+  }
+}
+function renderAll(){renderHeader();renderControls();renderLog();}
+function showBanner(h,s){$('banner-head').innerHTML=h;$('banner-sub').innerHTML=s;$('banner').style.display='flex';}
+function hideBanner(){$('banner').style.display='none';}
+
+/* felt interaction */
+function canvasXY(ev){
+  const r=cv.getBoundingClientRect();
+  return {x:(ev.clientX-r.left)*(W/r.width),y:(ev.clientY-r.top)*(H/r.height)};
+}
+cv.addEventListener('mousemove',(ev)=>{const {x,y}=canvasXY(ev);hoverZone=zoneAt(x,y);});
+cv.addEventListener('mouseleave',()=>{hoverZone=null;});
+cv.addEventListener('click',(ev)=>{
+  if(spinning||(mode==='tide'&&pending))return;
+  const {x,y}=canvasXY(ev);
+  const z=zoneAt(x,y);
+  if(!z)return;
+  const key=zoneKey(z);
+  if(denom===0){ // eraser: lift this spot
+    const before=bets.length;
+    bets=bets.filter(b=>b.zone!==key);
+    if(bets.length<before){chipSnd();}
+  }else{
+    if(totalStaked()+denom>purse){showBanner('The purse is light','Practice money refloats on reload.');setTimeout(hideBanner,2000);return;}
+    const ex=bets.find(b=>b.zone===key);
+    if(ex)ex.stake+=denom;
+    else bets.push({type:z.type,sel:z.sel,stake:denom,zone:key});
+    chipSnd();
+  }
+  renderControls();
+});
+$('denoms').addEventListener('click',(e)=>{
+  const b=e.target.closest('.denom');if(!b)return;
+  denom=Number(b.dataset.d);
+  document.querySelectorAll('.denom').forEach(x=>x.classList.toggle('on',x===b));
+  tone(700,.06,.05);
+});
+$('undo-btn').addEventListener('click',()=>{
+  const last=bets[bets.length-1];
+  if(!last)return;
+  last.stake-=denom>0?Math.min(denom,last.stake):last.stake;
+  if(last.stake<=0)bets.pop();
+  chipSnd();renderControls();
+});
+$('clear-btn').addEventListener('click',()=>{bets=[];chipSnd();renderControls();});
+$('rebet-btn').addEventListener('click',()=>{
+  if(!lastBets||spinning)return;
+  const tot=lastBets.reduce((a,b)=>a+b.stake,0);
+  if(tot>purse)return;
+  bets=lastBets.map(b=>({...b}));chipSnd();renderControls();
+});
+$('spin-btn').addEventListener('click',async()=>{
+  if($('spin-btn').disabled)return;
+  ac().resume?.();
+  const tot=totalStaked();
+  if(tot>purse)return;
+  purse-=tot;save(LS.purse,purse);renderHeader();
+  if(mode==='tide'){try{await tideSpin();}catch{purse+=tot;save(LS.purse,purse);showBanner('The tide is out of reach','Could not reach the chain — your stake is returned.');setTimeout(hideBanner,2500);}}
+  else await practiceSpin();
+});
+$('m-practice').addEventListener('click',()=>{mode='practice';$('m-practice').classList.add('on');$('m-tide').classList.remove('on');renderControls();});
+$('m-tide').addEventListener('click',()=>{mode='tide';$('m-tide').classList.add('on');$('m-practice').classList.remove('on');fetchTip().catch(()=>{});renderControls();});
+$('sound-btn').addEventListener('click',()=>{soundOn=!soundOn;save(LS.sound,soundOn);renderHeader();});
+
+// deterministic demo hook for the critics
+window.__bet=(type,sel,stake)=>{const z=ZONES.find(z=>z.type===type&&JSON.stringify(z.sel)===JSON.stringify(sel));
+  if(!z)return 'no zone';bets.push({type,sel,stake,zone:zoneKey(z)});renderControls();return 'ok';};
+window.__spin=async(seed)=>{const tot=totalStaked();purse-=tot;save(LS.purse,purse);await doSpin(seed);return 'spun';};
+
+/* boot */
+let lastNumberBoot=load('helm-lastnum',null);
+lastNumber=lastNumberBoot;
+if(purse<1&&!pending){purse=1000;save(LS.purse,purse);}
+renderAll();
+fetchTip().catch(()=>{});
+if(pending)watchTide();
+</script>
+</body>
+</html>
