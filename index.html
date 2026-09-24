@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
 <title>The Helm — the tide turns the helm</title>
-<meta name="description" content="European roulette on a ship's helm — 37 pockets, one Bitcoin block turns it. Every bet on the felt faces the same 2.70%, and every spin verifies forever.">
+<meta name="description" content="European roulette on a ship's helm — 37 pockets, one Blake testnet4 block turns it. Every bet on the felt faces the same 2.70%, and every spin verifies forever.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Helm — the tide turns the helm">
 <meta property="og:description" content="A ship's-wheel roulette: place your spread on the chart-table felt, the next block turns the helm. One number settles every bet — 2.70% on the whole felt, verifiable by anyone.">
@@ -44,9 +45,42 @@
   .board-frame{position:relative;border-radius:16px;overflow:hidden;
     border:1px solid var(--line);box-shadow:0 10px 30px -18px rgba(35,46,56,.5);background:#123f34}
   canvas{display:block;width:100%;height:auto}
-  #sea{cursor:crosshair}
+  #sea{cursor:default;touch-action:manipulation}
+  #sea.hot{cursor:pointer}
+  #sea:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+  @media(orientation:landscape) and (max-height:500px){#sea{max-height:calc(100svh - 70px);width:auto;margin:0 auto}
+    body #spin-btn{position:fixed;right:8px;bottom:10px;width:104px;font-size:13px;padding:10px 6px;line-height:1.25;z-index:5;box-shadow:0 8px 22px -6px rgba(20,40,50,.55)}
+    body #spin-btn.away{transform:translateX(130%)}
+    .cols>.chart{padding-right:118px}
+    body #spin-btn[aria-disabled=true]{opacity:1;background:#557482}}
   .cols{display:grid;grid-template-columns:1fr 340px;gap:14px;margin-top:14px}
-  @media(max-width:900px){.cols{grid-template-columns:1fr}}
+  .cols>*{min-width:0}
+  .cols>.chart{order:2}
+  @media(max-width:900px){.cols{grid-template-columns:1fr}.cols>.chart{order:0}}
+  @media(max-width:360px){header .chip{padding:6px 9px}header{gap:8px}.pl{display:none}}
+  @media(max-width:340px){#tide-chip small{display:none}header .chip{padding:6px 7px;gap:5px}header{gap:6px}}
+  @media(max-width:820px){.lw{display:none}}
+  @media(max-width:440px){#tide-chip.riding small{display:none}}
+  #tide-togo{color:var(--accent);font-weight:700}
+  @media(max-width:440px){.lw{display:none}header{gap:9px}header .chip{padding:7px 10px}}
+  @media(max-width:420px){.lg th:nth-child(3),.lg td:nth-child(3),.lg th:nth-child(4),.lg td:nth-child(4){display:none}}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .sessline{color:var(--ink-soft);font-size:12.5px;margin:-2px 0 8px}
+  .sessline b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .morebtn{margin-top:8px;font:600 12.5px system-ui;background:none;border:0;color:var(--accent);cursor:pointer;padding:6px 0}
+  .quick{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-soft);margin-top:8px;cursor:pointer}
+  .keys{color:var(--ink-soft);font-size:12px;margin-top:6px}
+  .keys kbd{font:600 11px ui-monospace,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px;background:#fff}
+  .vbox{font-size:12.5px;line-height:1.6;background:#f6f9fb;border:1px solid #d5e4ec;border-radius:9px;padding:8px 10px;overflow-wrap:anywhere}
+  .vbox code{font-size:11.5px}
+  .proof a[data-verify]{display:inline-block;padding:6px 2px}
+  .pays{margin-top:10px;font-size:13px}
+  .pays summary{cursor:pointer;font-weight:600;color:var(--accent);padding:4px 0}
+  .pays td{padding:4px 6px}.pays td:last-child{text-align:right;font-weight:700;white-space:nowrap}
+  .pays p{color:var(--ink-soft);margin:6px 0 0;font-size:12.5px}
+  #spin-btn.refit{background:linear-gradient(#e2c479,#c9a24b);color:#232e38}
+  #spin-btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+  #spin-btn[aria-disabled=true]{opacity:1;background:#557482;cursor:default;filter:none}
   .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;
     box-shadow:0 1px 3px rgba(35,46,56,.07)}
   .card h2{margin:0 0 10px;font:700 13px/1 system-ui;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
@@ -55,9 +89,14 @@
   .mode button{flex:1;font:600 14px system-ui;padding:8px 0;border:0;background:#fff;cursor:pointer;color:var(--ink-soft)}
   .mode button.on{background:var(--accent);color:#fff}
   .denoms{display:flex;gap:7px;margin-bottom:10px}
+  #chip-fab{display:none}
+  @media(pointer:coarse){.keys{display:none}}
+  .calls{display:flex;gap:6px;margin:0 0 10px}
+  .calls button{flex:1;font:600 12.5px system-ui;padding:6px 0;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;color:var(--ink)}
+  .calls button:hover{border-color:var(--accent)}
   .denom{flex:1;border:2px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;
     font:800 14px system-ui;padding:9px 0;color:var(--ink)}
-  .denom.on{border-color:var(--gold);background:#fdf8ea;box-shadow:0 0 0 3px rgba(201,162,75,.25)}
+  .denom.on{border-color:#8a6508;background:#fdf8ea;box-shadow:0 0 0 3px rgba(201,162,75,.25)}
   .denom.eraser.on{border-color:var(--danger);box-shadow:0 0 0 3px rgba(166,61,46,.2)}
   .statline{display:flex;justify-content:space-between;background:#eef6fa;border:1px solid #bcd7e4;
     border-radius:9px;padding:8px 11px;font-size:13.5px;margin-bottom:8px}
@@ -66,9 +105,22 @@
   .rowbtns button{flex:1;font:600 13px system-ui;padding:8px 0;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer}
   .rowbtns button:hover{border-color:var(--accent)}
   #spin-btn{width:100%;font:700 16px system-ui;padding:12px 0;border:0;border-radius:11px;cursor:pointer;
-    color:#fff;background:linear-gradient(#2a86a8,var(--accent));box-shadow:0 6px 14px -7px rgba(30,111,142,.6)}
+    color:#fff;background:linear-gradient(#247a9a,var(--accent));box-shadow:0 6px 14px -7px rgba(30,111,142,.6)}
   #spin-btn:hover{filter:brightness(1.06)}
   #spin-btn[disabled]{opacity:.55;cursor:default;filter:none}
+  @media(max-width:600px){
+    html{scroll-padding-bottom:84px}
+    body #spin-btn{position:fixed;left:12px;right:12px;bottom:max(10px,env(safe-area-inset-bottom));width:auto;z-index:5;box-shadow:0 8px 22px -6px rgba(20,40,50,.55);transition:transform .25s}
+    body #spin-btn[aria-disabled=true]{opacity:1;background:#557482}
+    body #spin-btn.away,#chip-fab.away{transform:translateY(130%)}
+    body #spin-btn{left:80px}
+    #chip-fab{display:block;position:fixed;left:12px;bottom:max(10px,env(safe-area-inset-bottom));width:58px;height:46px;border-radius:999px;z-index:5;
+      border:2px solid #8a6508;background:#fdf8ea;font:800 16px system-ui;color:var(--ink);box-shadow:0 8px 22px -6px rgba(20,40,50,.55);transition:transform .25s}
+    #chip-fab small{display:block;font:600 9px system-ui;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:-2px}
+    .keys{display:none}
+    body{padding-bottom:84px}
+  }
+  @media(max-width:600px) and (prefers-reduced-motion:reduce){body #spin-btn{transition:none}}
   .modenote{color:var(--ink-soft);font-size:12.5px;margin-top:8px;line-height:1.5}
   table{border-collapse:collapse;width:100%;font-size:13.5px}
   th{font:700 11px system-ui;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:4px 8px}
@@ -79,11 +131,15 @@
   .tag{font-size:11px;padding:1.5px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink-soft)}
   footer{margin-top:18px;color:var(--ink-soft);font-size:13px;line-height:1.6}
   footer a{color:var(--accent)}
-  #banner{position:absolute;left:0;right:0;top:12px;display:none;align-items:flex-start;justify-content:center;pointer-events:none}
+  #banner{position:absolute;left:0;right:0;bottom:12px;display:none;align-items:flex-start;justify-content:center;pointer-events:none}
   #banner .inner{background:rgba(247,241,227,.96);border:1px solid var(--line);border-radius:14px;
     padding:14px 24px;text-align:center;box-shadow:0 12px 30px -12px rgba(0,0,0,.4);max-width:80%}
   #banner .head{font:800 21px var(--serif)}
   #banner .sub{color:var(--ink-soft);margin-top:3px;font-size:14px}
+  #banner .miss{font-style:italic;font-size:13px;color:var(--ink-soft);margin-top:2px}
+  @media(min-width:601px){#banner{right:52%;bottom:auto;top:66%}#banner .inner{max-width:92%}}
+  @media(max-width:600px){#banner{bottom:auto;top:27%}#banner .head{font-size:17px}#banner .inner{padding:7px 12px;max-width:94%}#banner .sub{font-size:13px}}
+  @media(prefers-reduced-motion:reduce){#spin-btn,.denom{transition:none}}
 </style>
 </head>
 <body>
@@ -92,45 +148,69 @@
     <h1>⎈ THE HELM</h1>
     <span class="tagline">the tide turns the helm</span>
     <span class="spacer"></span>
-    <span class="chip" id="tide-chip" title="Bitcoin testnet4 tip">〜 <small>tide</small> <span id="tide-height">—</span></span>
-    <span class="chip purse">◉ <small>purse</small> <span id="purse">0</span></span>
-    <button class="chip" id="sound-btn" aria-label="toggle sound"><span id="sound-ic">🔊</span></button>
+    <span class="chip" id="tide-chip" title="The latest block on Blake testnet4 (mempool.guide). A Tide spin turns on the block after it.">〜 <small><span class="lw">latest </span>block</small> <span id="tide-height">…</span><span id="tide-togo"></span></span>
+    <span class="chip purse">◉ <small class="pl">purse</small> <span id="purse">0</span></span>
+    <button class="chip" id="sound-btn" aria-label="Sound" aria-pressed="true"><span id="sound-ic" aria-hidden="true">🔊</span></button>
   </header>
 
   <div class="board-frame">
-    <canvas id="sea" width="1028" height="520"></canvas>
-    <div id="banner"><div class="inner"><div class="head" id="banner-head"></div><div class="sub" id="banner-sub"></div></div></div>
+    <canvas id="sea" width="1028" height="520" tabindex="0" role="application" aria-roledescription="roulette felt" aria-label="The felt. Arrow keys move between bets, type a number to jump to it, N bets a number and its wheel neighbours, Enter or Space places a chip, Delete lifts chips, B reads your bets, T turns the helm."></canvas>
+    <div id="banner" aria-hidden="true"><div class="inner"><div class="head" id="banner-head"></div><div class="sub" id="banner-sub"></div><div class="miss" id="banner-miss"></div></div></div>
   </div>
 
   <div class="cols">
-    <div class="card">
-      <h2>The Log <span class="right" id="spin-count"></span></h2>
-      <table>
-        <thead><tr><th>Spin</th><th>Number</th><th>Bets</th><th>Staked</th><th>Net</th><th>Proof</th></tr></thead>
-        <tbody id="log-body"></tbody>
-      </table>
-    </div>
-    <div class="card">
+    <div class="card chart">
       <h2>The chart table</h2>
-      <div class="mode" id="mode">
-        <button id="m-practice" class="on">◉ Practice</button>
-        <button id="m-tide">〜 The Tide</button>
-      </div>
       <div class="denoms" id="denoms">
-        <button class="denom on" data-d="1">1</button>
-        <button class="denom" data-d="5">5</button>
-        <button class="denom" data-d="25">25</button>
-        <button class="denom" data-d="100">100</button>
-        <button class="denom eraser" data-d="0" title="lift chips off a spot">⌫</button>
+        <button class="denom on" data-d="1" aria-pressed="true" aria-label="Chip 1">1</button>
+        <button class="denom" data-d="5" aria-pressed="false" aria-label="Chip 5">5</button>
+        <button class="denom" data-d="25" aria-pressed="false" aria-label="Chip 25">25</button>
+        <button class="denom" data-d="100" aria-pressed="false" aria-label="Chip 100">100</button>
+        <button class="denom eraser" data-d="0" title="lift chips off a spot" aria-pressed="false" aria-label="Eraser: lift chips off a spot">⌫</button>
       </div>
       <div class="statline"><span>On the felt</span><b id="staked">0 across 0 bets</b></div>
-      <div class="rowbtns">
+      <button id="chip-fab" aria-label="Chip size 1 — tap to change">1</button>
+      <button id="spin-btn">Turn the helm</button>
+      <div class="rowbtns" style="margin-top:10px">
         <button id="undo-btn">Undo</button>
         <button id="clear-btn">Clear the felt</button>
         <button id="rebet-btn">Re-bet</button>
+        <button id="double-btn" aria-label="Double the felt">×2</button>
       </div>
-      <button id="spin-btn">Turn the helm</button>
+      <div class="calls" id="calls" role="group" aria-label="Called bets">
+        <button data-call="tiers" title="Tiers: the far side of the wheel from zero — six splits">Tiers</button>
+        <button data-call="orph" title="Orphelins: the pockets the other two miss — one straight and four splits">Orphelins</button>
+        <button data-call="zero" title="Zero game: the seven pockets closest to zero — three splits and a straight">Zero game</button>
+      </div>
+      <div class="mode" id="mode">
+        <button id="m-practice" class="on" aria-pressed="true">◉ Practice</button>
+        <button id="m-tide" aria-pressed="false">〜 The Tide</button>
+      </div>
       <p class="modenote" id="modenote"></p>
+      <label class="quick"><input type="checkbox" id="quick-cb"> Quick spins</label>
+      <details class="pays"><summary>What pays what</summary>
+        <table><tbody>
+          <tr><td>Straight — one number</td><td>35 to 1</td></tr>
+          <tr><td>Split — two, side by side</td><td>17 to 1</td></tr>
+          <tr><td>Street — a row of three</td><td>11 to 1</td></tr>
+          <tr><td>Corner — four that meet</td><td>8 to 1</td></tr>
+          <tr><td>Six line — two rows</td><td>5 to 1</td></tr>
+          <tr><td>Dozen or 2:1 column — twelve</td><td>2 to 1</td></tr>
+          <tr><td>Red, black, even, odd, 1–18, 19–36</td><td>1 to 1</td></tr>
+        </tbody></table>
+        <p>Zero is on none of the outside bets. That one pocket is the house’s whole edge: 2.70%, the same on every bet.</p>
+      </details>
+      <p class="keys"><kbd>T</kbd> turn · <kbd>R</kbd> re-bet · <kbd>U</kbd> undo · <kbd>Space</kbd> skips a spin · on the felt: arrows + <kbd>Enter</kbd>, <kbd>N</kbd> neighbours, <kbd>B</kbd> reads your bets</p>
+    </div>
+    <div class="card logcard">
+      <h2>The Log <span class="right" id="spin-count"></span></h2>
+      <p class="sessline" id="sessline"></p>
+      <p class="sessline" id="goals"></p>
+      <table class="lg">
+        <thead><tr><th>Spin</th><th>Number</th><th>Bets</th><th>Staked</th><th>Net</th><th>Proof</th></tr></thead>
+        <tbody id="log-body"></tbody>
+      </table>
+      <button class="morebtn" id="more-btn" hidden>Show all</button>
     </div>
   </div>
 
@@ -138,31 +218,124 @@
     <p>European single-zero: the spin is <code>blockSeed mod 37</code>, and every one of the felt's 155
     legal bets returns exactly 36/37 in expectation — <b>2.70%, identical across the whole table</b>,
     enumerated in <a href="tests.js">tests</a> over the maths in <a href="helm.js">helm.js</a>.
-    Click cell centres for straights, edges for splits, crossings for corners, the row ends for streets.
+    Tap a pocket on the wheel to bet it and its two neighbours either side.
+    Tap a number for a straight, its edge for a split, a crossing for a corner, the rail on the left for streets (between rows for six lines).
+    Check any Tide spin yourself: the pocket is <code>sha256(blockHash + "|" + mark)</code> read as one big number, mod 37 —
+    tap <i>verify</i> in the log to see every step, or run <code>verifySpin</code> from helm.js.
     Practice money; the tide spins on the next block · a <a href="https://tide-games.github.io/">tide-games</a> boat.</p>
   </footer>
 </div>
 
+<div id="sr" class="sr-only" aria-live="polite"></div><div id="sr2" class="sr-only" aria-live="polite"></div>
 <script type="module">
 import { POCKETS, WHEEL, REDS, colorOf, spinFromSeed, covers, PAYS, settleSpin } from './helm.js';
 
 /* ================================================================ state */
-const LS={purse:'helm-purse',log:'helm-log',n:'helm-n',sound:'helm-sound',pending:'helm-pending',last:'helm-lastbets'};
+// The ledger is one key — purse, log, spin count, the spread riding the tide and a
+// sequence number — written in one step, so another tab sees all of a change or none
+// of it. A tab still running the previous page only writes the old keys; they are
+// copied in once, marker first.
+const LS={ledger:'helm-ledger',sound:'helm-sound',legacyPending:'helm-pending',last:'helm-lastbets'};
 const load=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v;}catch{return d;}};
-const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true;}catch{return false;}};
+try{
+  if(localStorage.getItem('helm-migrated-at')==null){
+    localStorage.setItem('helm-migrated-at',String(Date.now()));
+  }
+  if(localStorage.getItem('helm-ledger')==null)
+    localStorage.setItem('helm-ledger',JSON.stringify({purse:load('helm-purse',1000),log:load('helm-log',[]),n:load('helm-n',0),pending:null,seq:0}));
+}catch{}
+const MIGRATED_AT=(()=>{try{const r=localStorage.getItem('helm-migrated-at');const v=Number(r);return r!=null&&Number.isSafeInteger(v)&&v>0?v:Date.now();}catch{return Date.now();}})();
 const $=(id)=>document.getElementById(id);
-const MEMPOOL='https://mempool.space/testnet4/api';
-const fmt=(n)=>Number(n).toLocaleString('en-US');
+// The tide is Blake's testnet4 (txbt4): the BLAKE2b fork of Bitcoin testnet4,
+// parted at block 150308, served by mempool.guide. Spins committed before the
+// move carry no chain stamp and settle/verify on plain testnet4 (mempool.space).
+const CHAIN='blake-testnet4', FORK_HEIGHT=150308;
+const EXPLORER='https://mempool.guide/testnet4', LEGACY_EXPLORER='https://mempool.space/testnet4';
+const onBlake=(r)=>r.chain===CHAIN||r.height<FORK_HEIGHT;
+const explorerFor=(r)=>onBlake(r)?EXPLORER:LEGACY_EXPLORER;
+const MEMPOOL=EXPLORER+'/api';
+const fmt=(n)=>Number.isFinite(Number(n))?Number(n).toLocaleString('en-US'):'—';
 const MINUS='−';
 
-let purse=load(LS.purse,1000);
-let spinN=load(LS.n,0);
-let log=load(LS.log,[]);
-let pending=load(LS.pending,null);   // {height, mark, bets, placedAt}
-let lastBets=load(LS.last,null);
-let soundOn=load(LS.sound,true);
+const isInt=(x)=>Number.isSafeInteger(x);
+const isHex=(x,n)=>typeof x==='string'&&x.length===n&&/^[0-9a-f]+$/.test(x);
+const okBet=(b)=>!!b&&typeof b==='object'&&typeof b.type==='string'&&Object.hasOwn(PAYS,b.type)&&Array.isArray(b.sel)&&isInt(b.stake)&&b.stake>0&&b.stake<=1e9&&(()=>{try{return !!covers(b.type,b.sel);}catch{return false;}})();
+const okBets=(a)=>Array.isArray(a)&&a.length>=1&&a.length<=400&&a.every(okBet);
+const okEntry=(e)=>!!e&&typeof e==='object'&&isInt(e.n)&&e.n>0&&e.n<1e8&&isInt(e.num)&&e.num>=0&&e.num<POCKETS&&isInt(e.betCount)&&isInt(e.staked)&&isInt(e.delta)&&isInt(e.at)
+  &&(e.mode==='practice'||(e.mode==='tide'&&isInt(e.height)&&e.height>0&&isHex(e.mark,32)&&(e.blockHash==null||isHex(e.blockHash,64))&&(e.bets==null||okBets(e.bets))));
+const okPending=(p)=>!!p&&typeof p==='object'&&isInt(p.height)&&p.height>0&&isHex(p.mark,32)&&okBets(p.bets)&&isInt(p.placedAt);
+let purse,spinN,log,pending,ledgerSeq=0,ledgerBroken=false,adoptable=null;   // pending: {height, mark, bets, placedAt, chain}
+// reads only; anything to repair (a mangled commit, a legacy one to adopt, an unreadable ledger) is noted and fixed under the lock
+function readState(){
+  mangled=null;adoptable=null;ledgerBroken=false;
+  let raw=null,L=null;
+  try{raw=localStorage.getItem(LS.ledger);}catch{}
+  if(raw==null){try{raw=JSON.stringify({purse:load('helm-purse',1000),log:load('helm-log',[]),n:load('helm-n',0),pending:null,seq:0});}catch{}}
+  try{L=JSON.parse(raw);}catch{ledgerBroken=raw!=null;}
+  if(!L||typeof L!=='object'||Array.isArray(L)){if(raw!=null)ledgerBroken=true;L={};}
+  if(raw!=null&&!ledgerBroken&&!(isInt(L.purse)&&L.purse>=0))ledgerBroken=true;
+  purse=isInt(L.purse)&&L.purse>=0?Math.min(L.purse,1e12):1000;
+  log=Array.isArray(L.log)?L.log.filter(okEntry).slice(0,60):[];
+  spinN=Math.max(isInt(L.n)&&L.n>=0&&L.n<99999000?L.n:0,0,...log.map((e)=>e.n));
+  ledgerSeq=isInt(L.seq)&&L.seq>=0?L.seq:0;
+  const pe=L.pending??null;
+  if(pe==null||okPending(pe))pending=pe;
+  else{pending=null;   // a mangled commit: its plain stake comes back
+    const t=typeof pe==='object'&&Array.isArray(pe.bets)?pe.bets.reduce((a,b)=>a+(isInt(b&&b.stake)&&b.stake>0?Math.min(b.stake,1e9):0),0):0;
+    mangled={t:t>0?Math.min(t,1e12):0};}
+  if(!pending){const lp=load(LS.legacyPending,null);
+    // a legacy commit is ours only if sealed before the move: it is moved in, never shared
+    if(lp&&okPending(lp)&&(lp.chain===CHAIN||lp.placedAt<=MIGRATED_AT))adoptable=lp;}
+}
+let mangled=null;
+readState();
+// locks serialise tabs, but storage reaches other tabs a moment later: every ledger write
+// bumps a sequence number and announces it; the next lock holder waits to see it
+const bc='BroadcastChannel' in window?new BroadcastChannel('helm-ledger'):null;
+let seenSeq=0,wrote=false;
+const pause=(ms)=>new Promise((r)=>setTimeout(r,ms));
+// wait (briefly) until this tab sees the newest write another tab announced
+async function freshRead(){readState();for(let i=0;i<60&&ledgerSeq<seenSeq;i++){await pause(25);readState();}}
+// the one write: the whole ledger with its next sequence number; a full store drops old log rows first
+function commit(ch){
+  const L={purse:ch.purse??purse,log:ch.log??log,n:ch.n??spinN,pending:'pending' in ch?ch.pending:pending,seq:Math.max(ledgerSeq,seenSeq)+1};
+  let ok=save(LS.ledger,L);
+  if(!ok&&L.log.length>12){L.log=L.log.slice(0,12);ok=save(LS.ledger,L);}
+  if(!ok)return false;
+  purse=L.purse;log=L.log;spinN=L.n;pending=L.pending;ledgerSeq=seenSeq=L.seq;wrote=true;
+  return true;
+}
+// locks serialise tabs; after a write the lock is held a moment longer, so the next
+// holder — in any tab — reads it
+const withLedger=(fn)=>navigator.locks?navigator.locks.request('helm-ledger',async()=>{
+  await freshRead();wrote=false;
+  try{return await fn();}
+  finally{if(wrote){if(bc)bc.postMessage({seq:ledgerSeq});await pause(40);}}
+}):(readState(),fn());
+if(bc)bc.onmessage=(e)=>{if(e.data&&isInt(e.data.seq))seenSeq=Math.max(seenSeq,e.data.seq);
+  if(e.data&&isInt(e.data.settled))replaySettled(e.data.settled).catch(()=>{});};
+// another tab settled the tide spin: show it here too, from the books — nothing is booked twice
+const replayed=new Set();let bootN=Infinity,queuedReplay=null;
+async function replaySettled(n){
+  if(replayed.has(n)||n<=bootN)return;
+  if(spinning||placing){queuedReplay=n;return;}
+  replayed.add(n);
+  await freshRead();
+  const e=log.find((x)=>x.n===n);
+  if(!e||e.mode!=='tide'||!e.bets||!e.blockHash||spinning){renderAll();return;}
+  veil={n,ret:e.staked+e.delta};
+  const out=settleSpin(e.bets,await sha256hex(e.blockHash+'|'+e.mark));
+  if(spinning||placing||out.number!==e.num){if(spinning||placing)queuedReplay=n,replayed.delete(n);veil=null;renderAll();return;}
+  out.height=e.height;
+  doSpin(e.bets.map((b)=>({...b,zone:zoneOfBet(b)})),out,true);
+}
+const esc=(x)=>String(x).replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let lastBets=(()=>{const v=load(LS.last,null);return okBets(v)?v:null;})();
+let soundOn=load(LS.sound,true)!==false;
 let mode='practice';
-let denom=1;                          // 0 = eraser
+let denom=(()=>{const d=load('helm-chip',1);return [1,5,25,100].includes(d)?d:1;})();   // 0 = eraser
+let lastMode=load('helm-lastmode','practice')==='tide'?'tide':'practice';
 let bets=[];                          // [{type, sel, stake}] — the live felt
 let spinning=false;
 
@@ -186,27 +359,42 @@ function bigWin(){if(!soundOn)return;[523,659,784,1047,1318,1568].forEach((f,i)=
 
 /* ================================================================ geometry */
 const cv=$('sea'),ctx=cv.getContext('2d');
-const W=1028,H=520;
-// the helm occupies the left square, the felt the right
-const HX=252,HY=252,HR=212;          // helm centre + radius
-// felt grid
-const FX=520,FY=54;                   // grid top-left (zero row above)
-const CW=94,CH=32;                    // cell size (3 cols × 12 rows)
+// wide: the helm on the left, the felt on the right; narrow (phones): the helm above the felt
+let W,H,HX,HY,HR,FX,FY,PORTRAIT=false;
+const CW=94;let CH=32;                // cell size (3 cols × 12 rows); taller on phones
 const GRIDW=CW*3;
+const narrowQ=matchMedia('(max-width:600px)');
+const RM=matchMedia('(prefers-reduced-motion: reduce)');
+let dispScale=1;
+const hintPx=()=>Math.round(Math.min(24,Math.max(15,12/dispScale)));
+function fitBands(){
+  const sc=(cv.getBoundingClientRect().width||W)/W;dispScale=sc||1;
+  EY=coarse.matches?Math.min(0.3,Math.max(0.15,6/(CH*sc))):0.22;
+}
+addEventListener('resize',()=>fitBands());
+function setGeometry(){
+  PORTRAIT=narrowQ.matches;
+  if(PORTRAIT){W=520;H=1175;HX=260;HY=226;HR=186;FX=72;FY=482;CH=46;}
+  else{W=1028;H=520;HX=238;HY=252;HR=206;FX=520;FY=54;CH=32;}
+  cv.width=W;cv.height=H;buildZones();fitBands();
+}
 
 let anim=null;    // spin animation {number,t0,dur,fromAngle,turns,ballBounces,settled}
-let lastNumber=load('helm-lastnum'==='x'?'':'helm-lastnum',null);
+let lastNumber=null;
 let floaters=[];
 let hoverZone=null;
 let winFlash=null; // {number, zones:[keys], t0}
 
+const TAU=Math.PI*2;
 const POCKET_ANG=(i)=>i*2*Math.PI/POCKETS; // index on WHEEL
+let kbOn=false,veil=null;   // veil: the spin being shown is booked, but not yet revealed
 
 /* ---------------- felt zones ----------------
    Zones: {kind:'straight'|'split'|'corner'|'street'|'sixline'|'zero'|'dozen'|'column'|'outside',
            type, sel, x, y} — snap targets for clicks & chip anchors. */
-const ZONES=[];
-(function buildZones(){
+const ZONES=[],ZMAP={};
+function buildZones(){
+  ZONES.length=0;
   const cellX=(c)=>FX+(c-1)*CW+CW/2;          // c: 1..3
   const cellY=(r)=>FY+ (r-1)*CH+CH/2 + CH;    // rows shifted below zero row
   // zero spans the grid width above row 1
@@ -226,7 +414,7 @@ const ZONES=[];
   ZONES.push({type:'split',sel:[0,1],x:cellX(1),y:FY+CH});
   ZONES.push({type:'split',sel:[0,2],x:cellX(2),y:FY+CH});
   ZONES.push({type:'split',sel:[0,3],x:cellX(3),y:FY+CH});
-  ZONES.push({type:'corner',sel:[0,1,2,3],x:FX+GRIDW/2+CW,y:FY+CH});
+  ZONES.push({type:'corner',sel:[0,1,2,3],x:FX,y:FY+CH});   // the basket: where 0, 1 and the rail meet
   // dozens (right rail)
   for(let d=1;d<=3;d++) ZONES.push({type:'dozen',sel:[d],x:FX+GRIDW+34,y:FY+CH+(d-1)*4*CH+2*CH});
   // columns (below grid)
@@ -234,16 +422,65 @@ const ZONES=[];
   // evens rail (far right)
   const evens=[['low','1–18'],['even','EVEN'],['red','RED'],['black','BLACK'],['odd','ODD'],['high','19–36']];
   evens.forEach(([t],i)=>ZONES.push({type:t,sel:[1],x:FX+GRIDW+94,y:FY+CH+i*2*CH+CH}));
-})();
-function zoneAt(x,y){
-  let best=null,bd=1e9;
-  for(const z of ZONES){
-    const d=(z.x-x)**2+(z.y-y)**2;
-    if(d<bd){bd=d;best=z;}
-  }
-  return bd<=15*15?best:null;
+  for(const k in ZMAP)delete ZMAP[k];
+  for(const z of ZONES)ZMAP[zoneKey(z)]=z;
 }
 const zoneKey=(z)=>z.type+':'+z.sel.join('-');
+const Z=(type,sel)=>ZMAP[type+':'+sel.join('-')]||null;
+// the whole felt is live: a number's middle is a straight, its edges splits, its crossings corners
+const EX=0.16;let EY=0.22;
+const coarse=matchMedia('(pointer:coarse)');
+function zoneAt(x,y){
+  const top=FY+CH,bot=FY+13*CH;
+  // outside boxes: the whole box
+  if(x>=FX+GRIDW+6&&x<FX+GRIDW+62&&y>=top&&y<bot)return Z('dozen',[Math.floor((y-top)/(4*CH))+1]);
+  if(x>=FX+GRIDW+66&&x<FX+GRIDW+122&&y>=top&&y<bot)return Z(['low','even','red','black','odd','high'][Math.floor((y-top)/(2*CH))],[1]);
+  if(x>=FX&&x<FX+GRIDW&&y>=bot+2&&y<bot+34)return Z('column',[Math.floor((x-FX)/CW)+1]);
+  // the street rail: a row is a street, the line between two rows a six line
+  if(x>=FX-34&&x<FX&&y>=top&&y<bot){
+    const r=Math.floor((y-top)/CH)+1,fy=(y-top)/CH-(r-1);
+    if(fy<EY&&r>1)return Z('sixline',[3*r-5,3*r-4,3*r-3,3*r-2,3*r-1,3*r]);
+    if(fy>1-EY&&r<12)return Z('sixline',[3*r-2,3*r-1,3*r,3*r+1,3*r+2,3*r+3]);
+    if(fy<EY&&r===1)return Z('corner',[0,1,2,3]);
+    return Z('street',[3*r-2,3*r-1,3*r]);
+  }
+  if(x<FX||x>=FX+GRIDW)return null;
+  const c=Math.min(3,Math.floor((x-FX)/CW)+1),fx=(x-FX)/CW-(c-1);
+  // zero, and its lower edge (the zero splits and the basket)
+  if(y>=FY&&y<top){
+    if((y-FY)/CH>1-EY)return c===1&&fx<EX?Z('corner',[0,1,2,3]):Z('split',[0,c]);
+    return Z('straight',[0]);
+  }
+  if(y<top||y>=bot)return null;
+  const r=Math.floor((y-top)/CH)+1,fy=(y-top)/CH-(r-1),n=3*(r-1)+c;
+  const hc=fx>1-EX&&c<3?c:fx<EX&&c>1?c-1:null;          // left column of a horizontal pair
+  const vr=fy>1-EY&&r<12?r:fy<EY&&r>1?r-1:null;          // upper row of a vertical pair
+  if(fy<EY&&r===1)return hc==null&&c===1&&fx<EX?Z('corner',[0,1,2,3]):Z('split',[0,c]);
+  if(hc!=null&&vr!=null){const m=3*(vr-1)+hc;return Z('corner',[m,m+1,m+3,m+4]);}
+  if(hc!=null){const m=3*(r-1)+hc;return Z('split',[m,m+1]);}
+  if(vr!=null){const m=3*(vr-1)+c;return Z('split',[m,m+3]);}
+  return Z('straight',[n]);
+}
+// where a spot's chips sit: outside boxes keep their labels readable
+function chipXY(z){
+  if(z.type==='dozen'||['low','even','red','black','odd','high'].includes(z.type))return {x:z.x+17,y:z.y};
+  if(z.type==='column')return {x:z.x+28,y:z.y};
+  return {x:z.x,y:z.y};
+}
+const DOZ=['1st 12','2nd 12','3rd 12'],EVN={low:'1–18',high:'19–36',even:'EVEN',odd:'ODD',red:'RED',black:'BLACK'};
+function betName(b){
+  const s=b.sel;
+  switch(b.type){
+    case 'straight':return 'straight '+s[0];
+    case 'split':return 'split '+s.join('–');
+    case 'street':return 'street '+s[0]+'–'+s[2];
+    case 'corner':return s[0]===0?'the basket 0–1–2–3':'corner '+s.join('–');
+    case 'sixline':return 'six line '+s[0]+'–'+s[5];
+    case 'dozen':return DOZ[s[0]-1];
+    case 'column':return ['1st','2nd','3rd'][s[0]-1]+' column';
+    default:return EVN[b.type]||b.type;
+  }
+}
 
 /* ================================================================ drawing */
 function drawFelt(now){
@@ -272,8 +509,8 @@ function drawFelt(now){
   // street/sixline rail with tick affordances
   ctx.fillStyle='rgba(240,230,200,.1)';
   ctx.fillRect(FX-28,cellY(1),24,CH*12);
-  ctx.fillStyle='rgba(240,230,200,.45)';
-  for(let r=1;r<=12;r++){ctx.beginPath();ctx.arc(FX-16,cellY(r)+CH/2,2.5,0,7);ctx.fill();}
+  ctx.fillStyle='rgba(240,230,200,.75)';
+  for(let r=1;r<=12;r++){ctx.beginPath();ctx.arc(FX-16,cellY(r)+CH/2,3,0,TAU);ctx.fill();}
   // dozens
   const dz=['1st 12','2nd 12','3rd 12'];
   for(let d=0;d<3;d++){
@@ -302,6 +539,16 @@ function drawFelt(now){
     ctx.fillStyle='#f5efe0';ctx.font='700 12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText('2:1',x+CW/2,y+13);ctx.textBaseline='alphabetic';
   }
+  // a pending tide spread rides, ghosted, until its block comes in
+  if(pending&&!bets.length&&!spinning){
+    ctx.save();ctx.globalAlpha=.62;
+    for(const b of pending.bets){const z=Z(b.type,b.sel);if(z){const q=chipXY(z);drawChip(q.x,q.y,b.stake);ctx.strokeStyle='#ffe182';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(q.x,q.y,13,0,TAU);ctx.stroke();ctx.setLineDash([]);}}
+    ctx.restore();
+  }
+  if(hoverNb&&!spinning){
+    ctx.fillStyle='rgba(255,225,130,.28)';
+    for(const n of hoverNb.nb){if(n===0){ctx.fillRect(FX,FY,GRIDW,CH);continue;}const r=Math.ceil(n/3),cc=((n-1)%3)+1;ctx.fillRect(FX+(cc-1)*CW,cellY(r),CW,CH);}
+  }
   // hover highlight: show what the click would bet
   if(hoverZone&&!spinning){
     const c=covers(hoverZone.type,hoverZone.sel);
@@ -312,13 +559,14 @@ function drawFelt(now){
         const r=Math.ceil(n/3),cc=((n-1)%3)+1;
         ctx.fillRect(FX+(cc-1)*CW,cellY(r),CW,CH);
       }
-      ctx.beginPath();ctx.arc(hoverZone.x,hoverZone.y,7,0,7);
+      const q=chipXY(hoverZone);ctx.beginPath();ctx.arc(q.x,q.y,7,0,TAU);
       ctx.fillStyle='rgba(255,225,130,.85)';ctx.fill();
+      if(kbOn){ctx.strokeStyle='#ffe182';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(q.x,q.y,15,0,TAU);ctx.stroke();}
     }
   }
   // the win flash: pulse the landed number and every winning zone
   if(winFlash&&now-winFlash.t0<3000){
-    const p=0.5+0.5*Math.sin(now/160);
+    const p=RM.matches?1:0.5+0.5*Math.sin(now/160);
     const n=winFlash.number;
     ctx.save();
     ctx.fillStyle=`rgba(255,225,130,${0.25+0.35*p})`;
@@ -328,21 +576,65 @@ function drawFelt(now){
     if(n===0)ctx.strokeRect(FX+1,FY+1,GRIDW-2,CH-2);
     else{const r=Math.ceil(n/3),c=((n-1)%3)+1;ctx.strokeRect(FX+(c-1)*CW+1,FY+(r-1)*CH+CH+1,CW-2,CH-2);}
     for(const k of winFlash.zones){
-      const z=ZONES.find(z=>zoneKey(z)===k);
+      const z=ZMAP[k];
       if(!z)continue;
-      ctx.beginPath();ctx.arc(z.x,z.y,13+p*3,0,7);
+      const q=chipXY(z);
+      ctx.beginPath();ctx.arc(q.x,q.y,12+p*3,0,TAU);
       ctx.strokeStyle=`rgba(182,240,192,${0.6+0.4*p})`;ctx.lineWidth=2.5;ctx.stroke();
     }
     ctx.restore();
   }
   // chips on the felt
   const stacks={};
-  bets.forEach((b,i)=>{const z=ZONES.find(z=>zoneKey(z)===b.zone);if(!z)return;
+  bets.forEach((b)=>{const z=ZMAP[b.zone];if(!z)return;
     (stacks[b.zone]??={z,total:0}).total+=b.stake;});
   for(const k in stacks){
-    const {z,total}=stacks[k];
-    drawChip(z.x,z.y,total);
+    const {z,total}=stacks[k];const q=chipXY(z);
+    drawChip(q.x,q.y,total);
   }
+  drawRecent();
+}
+function fitFill(t,x,y){
+  const max=PORTRAIT?W-24:2*(960-x),m=ctx.measureText(t).width;
+  if(m>max){const px=parseFloat((ctx.font.match(/([\d.]+)px/)||[0,15])[1]);ctx.font=ctx.font.replace(/[\d.]+px/,Math.max(9,px*max/m).toFixed(1)+'px');}
+  ctx.fillText(t,x,y);
+}
+function drawInfo(){
+  // the info line: names the spot under the pointer, or says how to bet
+  const iy=PORTRAIT?FY-30:22,ix=FX-46+(GRIDW+186)/2;
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+  if(hoverZone&&!spinning){
+    const c=covers(hoverZone.type,hoverZone.sel),on=stakeOn(zoneKey(hoverZone));
+    ctx.fillStyle='#ffe182';ctx.font=PORTRAIT?'700 22px system-ui':`700 ${hintPx()}px system-ui`;
+    fitFill(`${betName(hoverZone)} · pays ${PAYS[hoverZone.type]} to 1${PORTRAIT?'':` · ${c.size} number${c.size===1?'':'s'}`}${on?' · '+fmt(on)+' on it':''}`,ix,iy);
+  }else if(hoverNb&&!spinning){
+    ctx.fillStyle='#ffe182';ctx.font=PORTRAIT?'700 22px system-ui':`700 ${hintPx()}px system-ui`;
+    fitFill(denom?(PORTRAIT?`${hoverNb.n} & neighbours: ${hoverNb.nb.join(' ')}`:`${hoverNb.n} and neighbours · ${hoverNb.nb.join(' ')} · ${fmt(5*denom)} a tap`):'pick a chip to bet the wheel',ix,iy);
+  }else if(spinning&&anim&&!anim.landed&&!anim.rm){
+    ctx.fillStyle='rgba(240,230,200,.85)';ctx.font=PORTRAIT?'italic 19px Georgia,serif':`italic ${hintPx()}px Georgia,serif`;
+    fitFill(coarse.matches?'tap to bring the ball home':'click or press Space to bring the ball home',ix,iy);
+  }else if(!spinning){
+    ctx.fillStyle='rgba(240,230,200,.85)';ctx.font=PORTRAIT?'italic 19px Georgia,serif':`italic ${hintPx()}px Georgia,serif`;
+    fitFill(pending&&!bets.length?'your tide spread rides, ghosted, until its block lands':PORTRAIT||coarse.matches||dispScale<0.9?'tap a number or a colour, then Turn the helm':'put a chip on a number or a colour, then turn the helm · edges, crossings and the wheel bet more numbers',ix,iy);
+  }
+  ctx.restore();
+}
+// the last numbers, newest first: the table's memory
+function drawRecent(){
+  const nums=log.filter((e)=>!veil||e.n!==veil.n).slice(0,13).map((e)=>e.num);
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(240,230,200,.6)';ctx.font='700 10px system-ui';
+  ctx.fillStyle='rgba(240,230,200,.85)';
+  if(PORTRAIT){ctx.font='700 14px system-ui';ctx.fillText('LAST',30,H-28);}else{ctx.font=`700 ${Math.min(16,Math.max(10,8/dispScale))}px system-ui`;ctx.fillText('LAST',985,40);}
+  nums.forEach((n,i)=>{
+    const x=PORTRAIT?72+i*34:985,y=PORTRAIT?H-28:64+i*33,r=PORTRAIT?(i?14:16):(i?12:14);
+    ctx.globalAlpha=i?Math.max(.45,1-i*.05):1;
+    ctx.fillStyle=n===0?'#1e8449':REDS.has(n)?'#a93226':'#1c242e';
+    ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();
+    ctx.strokeStyle=i?'rgba(240,230,200,.35)':'#ffe182';ctx.lineWidth=i?1:2;ctx.stroke();
+    ctx.fillStyle='#f5efe0';ctx.font=(PORTRAIT?(i?'700 14px':'800 16px'):(i?'700 11px':'800 13px'))+' system-ui';ctx.fillText(String(n),x,y+.5);
+  });
+  ctx.restore();
 }
 function roundedCell(x,y,w,h){ctx.beginPath();ctx.roundRect(x+1,y+1,w-2,h-2,4);ctx.fill();
   ctx.strokeStyle='rgba(240,230,200,.35)';ctx.lineWidth=1;ctx.stroke();}
@@ -351,11 +643,11 @@ function numText(t,fill,x,y){ctx.fillStyle=fill;ctx.font='700 14px system-ui';
 function drawChip(x,y,total){
   ctx.save();
   const col= total>=100?'#3d3568': total>=25?'#1d6a50': total>=5?'#a93226':'#3a6ea5';
-  ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(x+1.5,y+3,11,10,0,0,7);ctx.fill();
-  ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,11,0,7);ctx.fill();
-  ctx.strokeStyle='#f5efe0';ctx.lineWidth=2;ctx.setLineDash([4,3]);
-  ctx.beginPath();ctx.arc(x,y,8,0,7);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='#fff';ctx.font='800 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(x+1.5,y+3,10,9,0,0,TAU);ctx.fill();
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,10,0,TAU);ctx.fill();
+  ctx.strokeStyle='#f5efe0';ctx.lineWidth=1.8;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.arc(x,y,7.5,0,TAU);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fff';ctx.font='800 9.5px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(total>999?(Math.round(total/100)/10+'k'):String(total),x,y);
   ctx.textBaseline='alphabetic';ctx.restore();
 }
@@ -364,24 +656,24 @@ function drawHelm(now){
   const rot=wheelAngle(now);
   ctx.save();ctx.translate(HX,HY);
   // water shadow
-  ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(4,10,HR+8,HR+2,0,0,7);ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(4,10,HR+8,HR+2,0,0,TAU);ctx.fill();
   // spokes + handles (the helm!)
   ctx.save();ctx.rotate(rot);
   for(let i=0;i<8;i++){
     ctx.save();ctx.rotate(i*Math.PI/4);
     ctx.fillStyle='#5c3a1e';
-    ctx.fillRect(-7,-HR-26,14,30);                    // handle
-    ctx.beginPath();ctx.arc(0,-HR-28,8,0,7);ctx.fill();
+    ctx.fillRect(-7,-HR-20,14,24);                    // handle
+    ctx.beginPath();ctx.arc(0,-HR-22,8,0,TAU);ctx.fill();
     ctx.restore();
   }
   ctx.restore();
   // outer wooden ring
   const wood=ctx.createRadialGradient(0,0,HR-38,0,0,HR+6);
   wood.addColorStop(0,'#8a5a2e');wood.addColorStop(.5,'#6d4423');wood.addColorStop(1,'#4a2c14');
-  ctx.fillStyle=wood;ctx.beginPath();ctx.arc(0,0,HR+4,0,7);ctx.arc(0,0,HR-34,0,7,true);ctx.fill();
+  ctx.fillStyle=wood;ctx.beginPath();ctx.arc(0,0,HR+4,0,TAU);ctx.moveTo(HR-34,0);ctx.arc(0,0,HR-34,TAU,0,true);ctx.fill();
   ctx.strokeStyle='#2e1a0a';ctx.lineWidth=2;
-  ctx.beginPath();ctx.arc(0,0,HR+4,0,7);ctx.stroke();
-  ctx.beginPath();ctx.arc(0,0,HR-34,0,7);ctx.stroke();
+  ctx.beginPath();ctx.arc(0,0,HR+4,0,TAU);ctx.stroke();
+  ctx.beginPath();ctx.arc(0,0,HR-34,0,TAU);ctx.stroke();
   // pocket ring
   ctx.save();ctx.rotate(rot);
   for(let i=0;i<POCKETS;i++){
@@ -401,14 +693,14 @@ function drawHelm(now){
   // brass hub
   const brass=ctx.createRadialGradient(-8,-10,4,0,0,HR-88);
   brass.addColorStop(0,'#f0d9a0');brass.addColorStop(.5,'#c9a24b');brass.addColorStop(1,'#8a6508');
-  ctx.fillStyle=brass;ctx.beginPath();ctx.arc(0,0,HR-88,0,7);ctx.fill();
-  ctx.strokeStyle='#5c4408';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,HR-88,0,7);ctx.stroke();
+  ctx.fillStyle=brass;ctx.beginPath();ctx.arc(0,0,HR-88,0,TAU);ctx.fill();
+  ctx.strokeStyle='#5c4408';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,HR-88,0,TAU);ctx.stroke();
   // last / current number in the hub
-  const show=anim&&anim.landed?anim.number:(anim?null:lastNumber);
+  const show=anim&&anim.landed?anim.number:(anim?null:(pending&&mode==='tide'?null:lastNumber));
   ctx.textAlign='center';
   if(show!=null){
     ctx.fillStyle=show===0?'#1e8449':REDS.has(show)?'#a93226':'#1c242e';
-    ctx.beginPath();ctx.arc(0,0,44,0,7);ctx.fill();
+    ctx.beginPath();ctx.arc(0,0,44,0,TAU);ctx.fill();
     ctx.strokeStyle='rgba(245,239,224,.7)';ctx.lineWidth=2;ctx.stroke();
     ctx.fillStyle='#f5efe0';ctx.font='800 34px system-ui';ctx.textBaseline='middle';
     ctx.fillText(String(show),0,1);ctx.textBaseline='alphabetic';
@@ -418,22 +710,29 @@ function drawHelm(now){
     for(let i=0;i<8;i++){ctx.save();ctx.rotate(i*Math.PI/4);
       ctx.beginPath();ctx.moveTo(0,-64);ctx.lineTo(6,-14);ctx.lineTo(0,-8);ctx.lineTo(-6,-14);ctx.closePath();
       ctx.fillStyle=i%2?'rgba(92,68,8,.28)':'rgba(92,68,8,.45)';ctx.fill();ctx.stroke();ctx.restore();}
-    ctx.beginPath();ctx.arc(0,0,70,0,7);ctx.stroke();
+    ctx.beginPath();ctx.arc(0,0,70,0,TAU);ctx.stroke();
     ctx.restore();
-    ctx.fillStyle='rgba(60,45,10,.75)';ctx.font='italic 15px Georgia,serif';ctx.textBaseline='middle';
-    ctx.fillText(anim?'…':'the tide waits',0,86);ctx.textBaseline='alphabetic';
+    ctx.fillStyle='#3c2d0a';ctx.font='italic 16px Georgia,serif';ctx.textBaseline='middle';
+    ctx.fillText(anim?'…':pending?'on the tide':'the tide waits',0,PORTRAIT?80:86);ctx.textBaseline='alphabetic';
   }
   // the ball (a pearl)
   const B=ballPos(now);
   if(B){
     ctx.fillStyle='rgba(255,255,255,.5)';
-    ctx.beginPath();ctx.arc(B.x,B.y,4,0,7);ctx.fill();
+    ctx.beginPath();ctx.arc(B.x,B.y,4,0,TAU);ctx.fill();
     const pg=ctx.createRadialGradient(B.x-2,B.y-3,1,B.x,B.y,8);
     pg.addColorStop(0,'#fff');pg.addColorStop(.6,'#efe8f8');pg.addColorStop(1,'#bdb2d6');
-    ctx.fillStyle=pg;ctx.beginPath();ctx.arc(B.x,B.y,7.5,0,7);ctx.fill();
+    ctx.fillStyle=pg;ctx.beginPath();ctx.arc(B.x,B.y,7.5,0,TAU);ctx.fill();
     ctx.strokeStyle='rgba(60,50,80,.4)';ctx.lineWidth=1;ctx.stroke();
   }
   ctx.restore();
+  if(burst&&now-burst.t0<2200&&!RM.matches){
+    const e=(now-burst.t0)/2200;
+    ctx.save();ctx.strokeStyle=`rgba(255,225,130,${1-e})`;ctx.lineWidth=6*(1-e)+1;
+    ctx.beginPath();ctx.arc(HX,HY,50+e*(HR+30),0,TAU);ctx.stroke();
+    const pr=10+22*Math.abs(Math.sin(e*Math.PI*3));ctx.lineWidth=3;ctx.strokeStyle=`rgba(255,240,180,${1-e*.7})`;
+    ctx.beginPath();ctx.arc(HX,HY-(HR-61),pr,0,TAU);ctx.stroke();ctx.restore();
+  }
   // pointer at the top
   ctx.fillStyle='#c9a24b';
   ctx.beginPath();ctx.moveTo(HX-13,HY-HR-24);ctx.lineTo(HX+13,HY-HR-24);ctx.lineTo(HX,HY-HR+4);ctx.closePath();ctx.fill();
@@ -442,21 +741,27 @@ function drawHelm(now){
 
 /* spin choreography — wall-clock, deterministic, ends with the winning
    pocket under the pointer and the pearl nested in it */
-const SPIN_MS=7600;
+let quickPref=(()=>{const v=load('helm-quick',null);return v===true||v===false?v:null;})();
+const isQuick=()=>quickPref??(sess.spins>=1);
+let quick=false;
+let quickTold=false;
+const spinMs=(tide)=>{if(RM.matches)return 500;quick=!tide&&isQuick();if(quick&&quickPref==null&&!quickTold){quickTold=true;setTimeout(()=>announce('Quick spins are on — untick Quick spins for the full turn.'),900);}return quick?2800:7600;};
+let burst=null;
 function targetAngle(number){
   const idx=WHEEL.indexOf(number);
   return -POCKET_ANG(idx);            // pocket idx at top (pointer) when wheel rotation = this
 }
 function wheelAngle(now){
   if(!anim) return lastNumber!=null?targetAngle(lastNumber):0;
-  const e=Math.min(1,(now-anim.t0)/SPIN_MS);
+  const e=Math.min(1,(now-anim.t0)/anim.dur);
+  if(anim.rm)return anim.fromAngle+anim.delta;
   const ease=1-Math.pow(1-e,3.6);
   return anim.fromAngle+(anim.turns*2*Math.PI+anim.delta)*ease;
 }
 function ballPos(now){
   if(!anim) return lastNumber!=null?pocketXY(lastNumber,wheelAngle(now)):null;
-  const e=Math.min(1,(now-anim.t0)/SPIN_MS);
-  if(e>=1) return pocketXY(anim.number,wheelAngle(now));
+  const e=Math.min(1,(now-anim.t0)/anim.dur);
+  if(anim.rm||e>=1) return pocketXY(anim.number,wheelAngle(now));
   // phase 1 (0-.55): ball orbits the outer rim opposite the wheel
   // phase 2 (.55-.85): spirals in with choreographed bounces
   // phase 3 (.85-1): rides its pocket home
@@ -496,6 +801,7 @@ function frame(){
     for(let i=0;i<30;i++)ctx.fillRect((i*167)%W,(i*97)%H,2,2);
     drawFelt(now);
     drawHelm(now);
+    drawInfo();
     // floaters
     floaters=floaters.filter(f=>now-f.t0<1100);
     for(const f of floaters){
@@ -506,7 +812,7 @@ function frame(){
       ctx.globalAlpha=1;
     }
     if(anim&&!anim.landed){
-      const e=(now-anim.t0)/SPIN_MS;
+      const e=(now-anim.t0)/anim.dur;
       // pocket ticks while the ball rides the rim
       if(e<0.88){const a=wheelAngle(now);if(Math.abs(a-lastTickAng)>2*Math.PI/POCKETS){lastTickAng=a;tick();}}
       if(e>=1){anim.landed=true;landSpin();}
@@ -517,206 +823,570 @@ function frame(){
 requestAnimationFrame(frame);
 
 /* ================================================================ flow */
-function startAnim(number){
+function startAnim(number,tide){
   const from=lastNumber!=null?targetAngle(lastNumber):0;
   let delta=targetAngle(number)-from;
   while(delta<=0)delta+=2*Math.PI;
-  anim={number,t0:performance.now(),fromAngle:from,turns:4,delta,
-    ballFrom:Math.random()*7,ballTurns:6+Math.random()*2,
-    ballDropAng:Math.random()*7,bounces:3+(number%3),landed:false};
+  const dur=spinMs(tide),rm=RM.matches;
+  anim={number,rm,t0:performance.now(),dur,fromAngle:from,turns:rm?0:quick?2:4,delta,
+    ballFrom:Math.random()*TAU,ballTurns:rm?0:quick?3:6+Math.random()*2,
+    ballDropAng:Math.random()*TAU,bounces:rm?0:3+(number%3),landed:false};
   clack();
-  setTimeout(()=>{if(anim&&!anim.landed){anim.landed=true;landSpin();}},SPIN_MS+800); // watchdog
+  const me=anim;
+  setTimeout(()=>{if(anim===me&&!anim.landed){anim.landed=true;landSpin();}},dur+800); // watchdog
+}
+// a tap, or Space, brings the ball home now: the pocket was fixed before the wheel moved
+function skipSpin(){
+  if(!anim||anim.landed)return false;
+  const now=performance.now();
+  if(now-anim.t0>anim.dur*0.9)return false;
+  anim.t0=now-anim.dur*0.9;return true;
 }
 let pendingSettle=null;
-async function doSpin(seedHex,tideInfo){
-  spinning=true;renderControls();
-  const out=settleSpin(bets,seedHex);        // books before theatre
-  purse+=out.totalReturn;save(LS.purse,purse);
-  spinN++;save(LS.n,spinN);
-  log.unshift({n:spinN,num:out.number,color:out.color,betCount:bets.length,
+// the books: settled in one step before the theatre (callers hold the lock);
+// one write — if it fails, nothing is booked
+function bookSpin(spinBets,seedHex,tideInfo,extra={}){
+  const out=settleSpin(spinBets,seedHex);
+  const entry={n:spinN+1,num:out.number,color:out.color,betCount:spinBets.length,
     staked:out.totalStake,delta:out.delta,mode:tideInfo?'tide':'practice',
-    height:tideInfo?.height??null,mark:tideInfo?.mark??null,at:Date.now()});
-  log=log.slice(0,60);save(LS.log,log);
-  lastBets=bets.map(b=>({...b}));save(LS.last,lastBets);
-  pendingSettle=out;
-  startAnim(out.number);
+    height:tideInfo?.height??null,mark:tideInfo?.mark??null,blockHash:tideInfo?.blockHash??null,
+    bets:tideInfo?spinBets.map((b)=>({type:b.type,sel:b.sel,stake:b.stake})):undefined,chain:tideInfo?.chain,at:Date.now()};
+  const ch={log:[entry,...log].slice(0,60),purse:Math.min(1e12,purse-(extra.debit||0)+out.totalReturn),n:spinN+1};
+  if(extra.clearPending)ch.pending=null;
+  if(!commit(ch))throw new Error('storage full');
+  return out;
 }
+// the theatre only: the result was booked already
+let stash=null;   // the player's own felt, set aside while a tide spin plays
+function doSpin(spinBets,out,tide){
+  clearTimeout(bannerTimer);hideBanner();
+  stash=tide&&bets.length?{bets,history}:null;
+  spinning=true;bets=spinBets;history=[];out.mode=tide?'tide':'practice';renderControls();
+  const r=cv.getBoundingClientRect();
+  if(r.top<-4)cv.scrollIntoView({block:'start',behavior:RM.matches?'auto':'smooth'});
+  announce(tide?'The tide is in. The helm turns.':'The helm turns.');
+  if(!tide){lastBets=spinBets.map(b=>({...b}));save(LS.last,lastBets);lastMode='practice';save('helm-lastmode',lastMode);}
+  pendingSettle=out;
+  startAnim(out.number,tide);
+}
+let landedAt=0;
 function landSpin(){
-  const out=pendingSettle;pendingSettle=null;
-  if(!out){spinning=false;renderControls();return;}
+  landedAt=performance.now();
+  const out=pendingSettle;pendingSettle=null;veil=null;
+  if(!out){spinning=false;renderAll();return;}
   lastNumber=out.number;save('helm-lastnum',lastNumber);
   winFlash={number:out.number,zones:out.results.filter(r=>r.win).map(r=>r.zone),t0:performance.now()};
-  const wins=out.results.filter(r=>r.win);
-  if(out.delta>0){ (out.delta>=out.totalStake*5?bigWin:winChime)(); }
-  else tone(220,.1,.2,'triangle');
-  floaters.push({text:(out.delta>=0?'+':MINUS)+fmt(Math.abs(out.delta)),
-    x:HX,y:HY-HR-26,color:out.delta>=0?'#b6f0c0':'#ffb9a6',t0:performance.now(),big:true});
-  showBanner(
-    `<span class="num-${out.color}">${out.number}</span> ${out.color==='zero'?'· the house pocket':'· '+out.color}`,
-    wins.length?`${wins.length} of ${out.results.length} bets land · net <b>${out.delta>=0?'+':MINUS}${fmt(Math.abs(out.delta))}</b>`
-               :`the felt clears · net <b>${MINUS}${fmt(Math.abs(out.delta))}</b>`);
-  bets=[];
+  const wins=out.results.filter(r=>r.win),straightHit=wins.some((r)=>r.type==='straight');
+  if(straightHit){bigWin();burst={t0:performance.now()};}
+  else if(out.delta>0){ (out.delta>=out.totalStake*5?bigWin:winChime)(); }
+  else if(out.delta<0)tone(220,.1,.2,'triangle');
+  else tone(520,.08,.12);
+  const net=out.delta>0?'+'+fmt(out.delta):out.delta<0?MINUS+fmt(-out.delta):'±0';
+  if(!RM.matches)floaters.push({text:straightHit?'×36!':net,
+    x:HX,y:HY+78,color:out.delta>=0?'#b6f0c0':'#ffb9a6',t0:performance.now(),big:true});
+  // say it by bet: what paid, what missed
+  const paid=wins.slice(0,3).map((r)=>`${esc(betName(r))} won <b>${fmt(r.ret-r.stake)}</b>`).join(' · ')+(wins.length>3?` · +${wins.length-3} more`:'');
+  const missed=out.results.length-wins.length;
+  const sub=wins.length
+    ?`${paid}${missed?` · ${missed} miss${missed===1?'':'es'}`:''} — net <b>${net}</b>${out.delta===0?' (square)':''}`
+    :`the felt clears — net <b>${net}</b>`;
+  // a near miss: the pearl stopped beside one of your numbers on the wheel
+  const i=WHEEL.indexOf(out.number),nb=[WHEEL[(i+1)%POCKETS],WHEEL[(i+POCKETS-1)%POCKETS]];
+  const straights=out.results.filter((r)=>r.type==='straight').length;
+  const near=out.delta<0&&straights<=5?out.results.find((r)=>!r.win&&r.type==='straight'&&nb.includes(r.sel[0])):null;
+  checkGoals(out);
+  const brokeNow=purse<1&&!pending;
+  showBanner(`${out.mode==='tide'&&out.height?`<small style="display:block;font:600 12px system-ui;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">The tide turned — block ${fmt(out.height)}</small>`:''}<span class="num-${out.color}">${out.number}</span> ${out.color==='zero'?'· the house pocket':'· '+out.color}${straightHit&&out.delta>0?' — 35 to 1!':''}`,sub,
+    brokeNow?'The purse is empty — the gold button refits it.':[goalNote,near?`one pocket from your ${near.sel[0]}`:''].filter(Boolean).join(' · '));
+  announce(`${out.number}, ${out.color}. ${wins.length?wins.map((r)=>betName(r)+' wins '+fmt(r.ret-r.stake)).join(', ')+'.':'No bet lands.'} Net ${out.delta>0?'plus ':out.delta<0?'minus ':''}${fmt(Math.abs(out.delta))}. Purse ${fmt(purse)}.`);
+  // the session's high-water marks
+  sess.spins++;sess.best=Math.max(sess.best,purse);sess.bigWin=Math.max(sess.bigWin,out.delta);sess.net+=out.delta;
+  bets=stash?stash.bets:[];history=stash?stash.history:[];stash=null;
   spinning=false;
+  readState();
   renderAll();
-  setTimeout(hideBanner,3600);
+  afterBusy();
+  if(document.hidden&&out.mode==='tide')document.title='⎈ '+out.number+' landed — The Helm';
+  bannerTimer=setTimeout(hideBanner,straightHit||out.mode==='tide'||out.delta>=out.totalStake*10?6500:4200);
+  if(document.activeElement===document.body&&turnFocus)$('spin-btn').focus();
+  turnFocus=false;
 }
-async function practiceSpin(){
-  const seed=await sha256hex('practice|'+randHex(16));
-  await doSpin(seed);
-}
+let turnFocus=false;
+
 /* ---------------- the tide ---------------- */
 let tipHeight=0,tipAt=0;
-async function fetchTip(){
-  if(Date.now()-tipAt<20000)return tipHeight;
-  const r=await fetch(MEMPOOL+'/blocks/tip/height');
+function fetchT(url,ms=8000){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);return fetch(url,{signal:c.signal}).finally(()=>clearTimeout(t));}
+let chainOffline=false;
+async function fetchTip(api=MEMPOOL){
+  if(api===MEMPOOL&&Date.now()-tipAt<20000&&tipHeight)return tipHeight;
+  const r=await fetchT(api+'/blocks/tip/height');
   if(!r.ok)throw new Error('tide '+r.status);
-  tipHeight=Number((await r.text()).trim());tipAt=Date.now();
-  $('tide-height').textContent=fmt(tipHeight);
+  const t=(await r.text()).trim();
+  if(!/^[0-9]{1,9}$/.test(t)||Number(t)<1)throw new Error('The chain answered oddly.');
+  if(api!==MEMPOOL)return Number(t);
+  let v=Number(t);
+  if(v<FORK_HEIGHT||v>5e6)throw new Error('The chain answered oddly.');
+  if(!tipHeight||v>tipHeight+6){   // a fresh or jumping tip must be the chain's tip: the block at that height is the tip block
+    const [h,th]=await Promise.all([hashAtHeight(v).catch(()=>null),fetchT(api+'/blocks/tip/hash').then((r)=>r.ok?r.text():'',()=>'').then((x)=>x.trim().toLowerCase())]);
+    if(!h||h!==th)throw new Error('The chain answered oddly.');}
+  else if(v<tipHeight-6){if(await hashAtHeight(tipHeight).catch(()=>null))throw new Error('The chain answered oddly.');}
+  tipHeight=v;tipAt=Date.now();chainOffline=false;
+  $('tide-height').textContent=fmt(tipHeight);renderTogo();if(pending)renderControls();
   return tipHeight;
 }
 const blockHashCache={};
-async function hashAtHeight(h,{cacheOk=false}={}){
-  if(cacheOk&&blockHashCache[h])return blockHashCache[h];
-  const r=await fetch(MEMPOOL+'/block-height/'+h);
-  if(r.status===404)return null;
-  if(!r.ok)throw new Error('block '+r.status);
-  const hash=(await r.text()).trim();
-  if(cacheOk)blockHashCache[h]=hash;
-  return hash;
+async function hashAtHeight(h,{cacheOk=false,api=MEMPOOL}={}){
+  const key=api+':'+h;
+  if(cacheOk&&blockHashCache[key])return blockHashCache[key];
+  const r=await fetchT(api+'/block-height/'+h);
+  const body=r.ok?(await r.text()).trim().toLowerCase():'';
+  if(/^[0-9a-f]{64}$/.test(body)){if(cacheOk)blockHashCache[key]=body;return body;}
+  if(r.status===404||r.status>=500)return null;   // not mined yet (explorers say it differently)
+  throw new Error('block '+r.status);
 }
-async function tideSpin(){
-  const tip=await fetchTip();
-  const height=tip+1;
-  const mark=randHex(16);
-  pending={height,mark,bets:bets.map(b=>({...b})),placedAt:Date.now()};
-  save(LS.pending,pending);
-  bets=[];
-  renderAll();
-  showBanner('The helm waits on the tide',`It turns on block <b>${fmt(height)}</b> — about ten minutes. Your spread rides with it.`);
-  watchTide();
-}
+
 let tideTimer=null;
-async function trySettleTide(){
-  if(!pending)return false;
-  tipAt=0;const tip=await fetchTip();
-  if(tip<pending.height+1)return false;   // 1 conf — the reorg lesson
-  const hash=await hashAtHeight(pending.height,{cacheOk:true});
+let settler=!navigator.locks;   // one tab settles; the others queue for the role
+if(navigator.locks)navigator.locks.request('helm-tide-settler',()=>{settler=true;if(tideTimer){clearInterval(tideTimer);tideTimer=null;}readState();if(pending)watchTide();
+  setInterval(()=>{if(spinning||placing)return;readState();if(pending&&!tideTimer)watchTide();},15000);return new Promise(()=>{});});
+// work that waited while this tab was busy: a tide spin to settle, another tab's spin to replay
+function afterBusy(){
+  if(queuedReplay!=null&&!spinning&&!placing){const q=queuedReplay;queuedReplay=null;setTimeout(()=>replaySettled(q).catch(()=>{}),1500);return;}
+  if(pending&&settler&&!spinning&&!placing)trySettleTide().catch(()=>{});
+}
+let fullWarned=false;
+let lastSettleTry=0,turnCheck=false;   // turnCheck: the Turn button is waiting on this settle
+async function trySettleTide(fromTurn=false){
+  lastSettleTry=Date.now();
+  if(!pending||spinning||(placing&&!(fromTurn&&turnCheck))||!settler)return false;
+  const api=explorerFor(pending)+'/api';   // a spin settles on the chain it was committed to
+  const tip=await fetchTip(api===MEMPOOL?(tipAt=0,MEMPOOL):api);
+  const stale=Date.now()-pending.placedAt>48*3600e3;
+  let hash=null;
+  if(tip>=pending.height+1){hash=await hashAtHeight(pending.height,{cacheOk:true,api}).catch(()=>null);}   // 1 conf — the reorg lesson
+  if(stale&&tip<pending.height+1){   // two days on, the chain still hasn't reached its block: the stake comes home
+    const mark=pending.mark;let back=0;
+    await withLedger(async()=>{
+      if(!pending||pending.mark!==mark)return;
+      const t=pending.bets.reduce((a,b)=>a+b.stake,0);
+      if(commit({purse:Math.min(1e12,purse+t),pending:null}))back=t;
+    });
+    if(back){flash('The tide never came',`Its block didn’t come in after two days — your ${fmt(back)} is back in the purse.`,6000);renderAll();}
+    return false;
+  }
   if(!hash)return false;
+  const mark=pending.mark,seed=await sha256hex(hash+'|'+mark);
+  let out=null,p=null;
+  await withLedger(async()=>{
+    if(!pending||pending.mark!==mark||spinning||(placing&&!(fromTurn&&turnCheck)))return;
+    if(log.some((e)=>e.mark===mark)){commit({pending:null});return;}   // already booked
+    p=pending;
+    try{out=bookSpin(p.bets,seed,{height:p.height,mark:p.mark,blockHash:hash,chain:p.chain},{clearPending:true});veil={n:spinN,ret:out.totalReturn};}
+    catch{if(!fullWarned){fullWarned=true;flash('Storage is full','Your tide spin is in, but this browser can’t save it. Free some space (other tide-games tabs share it) — it settles when there’s room.',7000);}return;}
+  });
+  if(!out)return false;
+  if(bc)bc.postMessage({settled:spinN});
   if(tideTimer){clearInterval(tideTimer);tideTimer=null;}
-  const p=pending;pending=null;save(LS.pending,null);
-  const seed=await sha256hex(hash+'|'+p.mark);
-  bets=p.bets;
-  await doSpin(seed,{height:p.height,mark:p.mark,blockHash:hash});
+  out.height=p.height;
+  doSpin(p.bets.map((b)=>({...b,zone:zoneOfBet(b)})),out,true);
   return true;
 }
 function watchTide(){
   if(tideTimer||!pending)return;
-  tideTimer=setInterval(()=>{trySettleTide().catch(()=>{});fetchTip().catch(()=>{});},30000);
+  if(!settler){tideTimer=setInterval(()=>{readState();if(!pending){clearInterval(tideTimer);tideTimer=null;}renderAll();},30000);return;}
+  tideTimer=setInterval(()=>{trySettleTide().catch(()=>{});},12000);
   trySettleTide().catch(()=>{});
 }
+function zoneOfBet(b){const z=Z(b.type,b.sel);return z?zoneKey(z):undefined;}
 
 /* ================================================================ UI */
 const totalStaked=()=>bets.reduce((a,b)=>a+b.stake,0);
-function renderHeader(){$('purse').textContent=fmt(purse);$('sound-ic').textContent=soundOn?'🔊':'🔇';}
+const shownPurse=()=>veil?purse-veil.ret:purse;
+function renderTogo(){
+  const t=pending&&tipHeight&&onBlake(pending)?Math.max(0,pending.height+1-tipHeight):null;
+  $('tide-togo').textContent=pending?(t==null?' · riding':t?` · ${t} to go`:' · landing'):'';
+  $('tide-chip').classList.toggle('riding',!!pending);
+}
+function renderHeader(){renderTogo();$('purse').textContent=fmt(shownPurse());$('sound-ic').textContent=soundOn?'🔊':'🔇';$('sound-btn').setAttribute('aria-pressed',String(!!soundOn));}
+function rebetSpread(){
+  if(!lastBets||!okBets(lastBets)||lastMode!==mode)return null;
+  const lt=lastBets.reduce((a,b)=>a+b.stake,0);
+  if(lt<=purse)return {bets:lastBets.map((b)=>({...b,zone:zoneOfBet(b)})),scaled:false};
+  if(purse<1)return null;
+  // the same spread, smaller: each stake scaled down; spots that round to nothing keep one chip while the purse allows
+  const f=purse/lt;let left=purse;const nb=[];
+  const scaled=lastBets.map((b)=>({...b,zone:zoneOfBet(b),stake:Math.floor(b.stake*f)}));
+  for(const b of scaled)left-=b.stake;
+  for(const b of scaled){if(b.stake===0&&left>=1){b.stake=1;left--;}if(b.stake>0)nb.push(b);}
+  return {bets:nb,scaled:true};
+}
+const spreadTotal=(a)=>a.reduce((x,b)=>x+b.stake,0);
+const lastTotal=()=>lastBets&&okBets(lastBets)?lastBets.reduce((a,b)=>a+b.stake,0):0;
+const broke=()=>purse<1&&!pending&&!bets.length&&!spinning&&!veil;
 function renderControls(){
   $('staked').textContent=`${fmt(totalStaked())} across ${bets.length} bet${bets.length===1?'':'s'}`;
   const btn=$('spin-btn');
-  btn.disabled=spinning||!bets.length||(mode==='tide'&&!!pending);
-  btn.textContent=mode==='tide'?(pending?'The helm is turning on the tide…':'Turn on the next block'):'Turn the helm';
-  $('modenote').textContent=mode==='tide'
-    ?'Your whole spread rides one block: the next testnet4 block turns the helm — nobody knows the number yet.'
-    :'Practice spins are seeded locally and turn at once — pure fun, not provable.';
+  const rs=!bets.length?rebetSpread():null,rebetReady=!!rs,lt=rs?spreadTotal(rs.bets):0,sc=rs&&rs.scaled?' (scaled to your purse)':'';
+  btn.classList.toggle('refit',broke());
+  const waitTide=mode==='tide'&&!!pending&&!spinning;
+  btn.setAttribute('aria-disabled',String(!broke()&&!waitTide&&(spinning||placing||(!bets.length&&!rebetReady))));btn.disabled=false;
+  btn.classList.toggle('away',spinning);$('chip-fab').classList.toggle('away',spinning);
+  btn.textContent=broke()?'Refit the purse — 1,000 fresh doubloons'
+    :mode==='tide'?(pending?(bets.length?`Practice with these ${fmt(totalStaked())}`:'Practice while the tide comes in'):rebetReady?`Re-bet ${fmt(lt)}${sc} on the next block`:bets.length?`Turn on the next block · ${fmt(totalStaked())}`:'Turn on the next block')
+    :rebetReady?`Re-bet ${fmt(lt)}${sc} & turn the helm`:bets.length?`Turn the helm · ${fmt(totalStaked())}`:'Turn the helm';
+  $('undo-btn').disabled=spinning||!history.length;
+  $('clear-btn').disabled=spinning||!bets.length;
+  const riding=mode==='tide'&&!!pending;
+  $('rebet-btn').disabled=spinning||riding||!lastBets||lastMode!==mode;
+  $('double-btn').disabled=spinning||riding||(!bets.length&&(!lastBets||lastMode!==mode));
+  $('quick-cb').checked=isQuick();
+  let note;
+  if(mode==='tide'&&pending){
+    const togo=tipHeight&&onBlake(pending)?Math.max(0,pending.height+1-tipHeight):null,mins=Math.max(0,Math.round((Date.now()-pending.placedAt)/60000));
+    note=`Your ${fmt(pending.bets.reduce((a,b)=>a+b.stake,0))} rides block ${fmt(pending.height)} — `+
+      (togo==null?'checking the chain…':togo>=1?`needs ${togo} more block${togo===1?'':'s'} (~${togo*10} min)`:'it’s in; settling…')+
+      ` · placed ${mins>=120?Math.round(mins/60)+' h ago':mins?mins+' min ago':'just now'}. Practice while you wait — the helm turns here when it lands.`;
+  }else note=mode==='tide'
+    ?chainOffline?'The chain is out of reach right now — practice for now; the Tide comes back when it answers.':'Your whole spread rides one block: the next Blake testnet4 block turns the helm — nobody knows the number yet. About 20 minutes.'
+    :'Roulette: put chips on the felt, turn the helm, one number wins. Practice turns at once. The Tide lets the next public Blake testnet4 block pick the number — nobody, not even us, can rig it.';
+  if($('modenote').textContent!==note)$('modenote').textContent=note;
 }
 function renderLog(){
   const tb=$('log-body');tb.innerHTML='';
-  $('spin-count').textContent=log.length?`${log.length} spin${log.length===1?'':'s'}`:'';
-  if(!log.length){tb.innerHTML='<tr><td colspan="6" style="color:var(--ink-soft)"><i>No spins yet — the helm is lashed.</i></td></tr>';return;}
-  for(const e of log){
+  const shown=log.filter((e)=>!veil||e.n!==veil.n);
+  $('spin-count').textContent=shown.length?`${shown.length} spin${shown.length===1?'':'s'}`:'';
+  let run='';
+  const mine=shown.filter((e)=>e.n>bootN);
+  if(mine.length>=3){const shown=mine,c0=colorOf(shown[0].num);let k=0;while(k<shown.length&&colorOf(shown[k].num)===c0)k++;if(k>=3)run=` · <b>${k}</b> ${c0==='zero'?'zeros':c0+'s'} running`;}
+  renderGoals();
+  const last30=shown.slice(0,30).map((e)=>e.num);let hc='';
+  if(last30.length>=15){const cnt=new Array(POCKETS).fill(0);last30.forEach((n)=>cnt[n]++);const hot=cnt.indexOf(Math.max(...cnt)),hotOk=cnt[hot]>=3;const idx=(n)=>{const i=shown.findIndex((e)=>e.num===n);return i<0?Infinity:i;};let cold=0;for(let n=1;n<POCKETS;n++)if(idx(n)>idx(cold))cold=n;
+    hc=(hotOk||idx(cold)>=last30.length?` · last ${last30.length}:`:'')+(hotOk?` hot&nbsp;<b>${hot}</b>&nbsp;(${cnt[hot]}× in&nbsp;${last30.length})`:'')+(idx(cold)>=last30.length?` cold&nbsp;<b>${cold}</b> — not&nbsp;seen`:'');}
+  if(hc)hc=`<span title="Just history — every spin is still 1 in 37.">${hc} · just history</span>`;
+  $('sessline').innerHTML=sess.spins?`This session: <b>${sess.spins}</b> spin${sess.spins===1?'':'s'} · net <b>${sess.net>0?'+':sess.net<0?MINUS:'±'}${fmt(Math.abs(sess.net))}</b> · best purse <b>${fmt(sess.best)}</b>`+(sess.bigWin>0?` · biggest win <b>+${fmt(sess.bigWin)}</b>`:'')+run+hc:'';
+  $('more-btn').hidden=shown.length<=10;
+  $('more-btn').textContent=logAll?'Show fewer':`Show all ${shown.length}`;
+  if(pending){const tr=document.createElement('tr');tr.innerHTML=`<td colspan="6" style="color:var(--ink-soft)"><i>riding the tide · ${fmt(pending.bets.reduce((a,b)=>a+b.stake,0))} on block ${fmt(pending.height)}</i></td>`;tb.appendChild(tr);}
+  if(!shown.length&&pending)return;
+  if(!shown.length){tb.innerHTML='<tr><td colspan="6" style="color:var(--ink-soft)"><i>No spins yet — the helm is lashed. Put a chip on the felt, then turn it.</i></td></tr>';return;}
+  for(const e of logAll?shown:shown.slice(0,10)){
     const tr=document.createElement('tr');
     const proof=e.mode==='tide'
-      ?`<a href="https://mempool.space/testnet4/block-height/${e.height}" target="_blank" rel="noopener">block ${fmt(e.height)}</a> · seed ✓`
+      ?`<a href="${explorerFor(e)}/${e.blockHash?'block/'+esc(e.blockHash):'block/'+esc(e.height)}" target="_blank" rel="noopener">block ${fmt(e.height)}</a>${e.blockHash&&e.bets?` · <a href="#" data-verify="${esc(e.n)}" title="blockHash ${esc(e.blockHash)}&#10;mark ${esc(e.mark)}">verify</a>`:''}`
       :'<span class="tag">practice</span>';
-    tr.innerHTML=`<td>#${e.n}</td><td class="num-${e.color}">${e.num}</td><td>${e.betCount}</td>
+    tr.innerHTML=`<td>#${esc(e.n)}</td><td class="num-${colorOf(e.num)}">${esc(e.num)}</td><td>${esc(e.betCount)}</td>
       <td>${fmt(e.staked)}</td>
-      <td class="${e.delta>=0?'net-w':'net-l'}">${e.delta>=0?'+':MINUS}${fmt(Math.abs(e.delta))}</td>
+      <td class="${e.delta>=0?'net-w':'net-l'}">${e.delta>0?'+':e.delta<0?MINUS:'±'}${fmt(Math.abs(e.delta))}</td>
       <td class="proof">${proof}</td>`;
     tb.appendChild(tr);
   }
 }
 function renderAll(){renderHeader();renderControls();renderLog();}
-function showBanner(h,s){$('banner-head').innerHTML=h;$('banner-sub').innerHTML=s;$('banner').style.display='flex';}
+// verify a tide spin against the chain as it is now: re-fetch the hash, recompute the pocket and every bet
+$('log-body').addEventListener('click',async(ev)=>{
+  const a=ev.target.closest('[data-verify]');if(!a)return;ev.preventDefault();
+  const e=log.find((x)=>String(x.n)===a.dataset.verify);if(!e)return;
+  try{
+    let canonical=null;try{canonical=await hashAtHeight(e.height,{api:explorerFor(e)+'/api'});}catch{}
+    if(canonical&&canonical!==e.blockHash){a.textContent='block reorged ⚠';a.style.color='#8a6508';return;}
+    const v=settleSpin(e.bets,await sha256hex(e.blockHash+'|'+e.mark));
+    const ok=v.number===e.num&&v.delta===e.delta;
+    a.textContent=ok?(canonical?'verified ✓':'maths ✓ · chain unreachable'):'MISMATCH ✗';
+    announce(ok?`Spin ${e.n} verified: the block and your mark give pocket ${v.number}, as logged.`:`Spin ${e.n} does not match: the maths gives ${v.number}, the log says ${e.num}.`);
+    const row=a.closest('tr');const nx=row.nextElementSibling;if(nx&&nx.classList.contains('vrow'))nx.remove();
+    const vr=document.createElement('tr');vr.className='vrow';
+    vr.innerHTML=`<td colspan="6"><div class="vbox">block ${fmt(e.height)} hash <code>${esc(e.blockHash)}</code><br>your mark <code>${esc(e.mark)}</code><br>`+
+      `sha256(hash + "|" + mark) = <code>${esc((await sha256hex(e.blockHash+'|'+e.mark)))}</code><br>`+
+      `that number mod 37 = <b>${v.number}</b> — the log says <b>${esc(e.num)}</b>: ${ok?'it matches ✓':'MISMATCH ✗'}`+
+      `${canonical?' · the chain still has this block ✓':' · the chain couldn’t be reached to re-check the block'}</div></td>`;
+    row.after(vr);
+    a.title=`blockHash ${e.blockHash}\nmark ${e.mark}\nsha256(blockHash|mark) mod 37 → pocket ${v.number}`;
+  }catch{a.textContent='could not verify';}
+});
+let bannerTimer=null;
+function showBanner(h,s,m=''){$('banner-head').innerHTML=h;$('banner-sub').innerHTML=s;$('banner-miss').textContent=m;$('banner').style.display='flex';}
 function hideBanner(){$('banner').style.display='none';}
+function flash(h,s,ms=2600){clearTimeout(bannerTimer);showBanner(h,s);announce(h.replace(/<[^>]+>/g,'')+'. '+s.replace(/<[^>]+>/g,''));bannerTimer=setTimeout(hideBanner,ms);}
+// the screen reader's line: polite by default, queued so nothing is lost
+let srFlip=false;
+function announce(msg){srFlip=!srFlip;const a=$(srFlip?'sr':'sr2'),b=$(srFlip?'sr2':'sr');b.textContent='';a.textContent=msg;}
+let sess={spins:0,best:purse,bigWin:0,net:0},logAll=false,history=[];
+$('more-btn').addEventListener('click',()=>{logAll=!logAll;renderLog();});
 
 /* felt interaction */
 function canvasXY(ev){
   const r=cv.getBoundingClientRect();
   return {x:(ev.clientX-r.left)*(W/r.width),y:(ev.clientY-r.top)*(H/r.height)};
 }
-cv.addEventListener('mousemove',(ev)=>{const {x,y}=canvasXY(ev);hoverZone=zoneAt(x,y);});
-cv.addEventListener('mouseleave',()=>{hoverZone=null;});
+// the wheel's own bet: a pocket and its two neighbours either side, five straights
+function pocketAt(x,y){
+  const dx=x-HX,dy=y-HY,r=Math.hypot(dx,dy);
+  if(r<HR-90||r>HR-30||anim&&!anim.landed)return null;
+  const a=Math.atan2(dy,dx)+Math.PI/2-wheelAngle(performance.now());
+  const i=((Math.round(a/(TAU/POCKETS))%POCKETS)+POCKETS)%POCKETS;
+  return WHEEL[i];
+}
+const neighbours=(n)=>{const i=WHEEL.indexOf(n);return [-2,-1,0,1,2].map((d)=>WHEEL[(i+d+POCKETS)%POCKETS]);};
+let hoverNb=null;
+function placeNeighbours(n){
+  if(spinning||performance.now()-landedAt<800)return;
+  if(denom===0){flash('Pick a chip','Choose a chip size first — the eraser can’t bet the wheel.');return;}
+  const nb=neighbours(n),next=bets.map((b)=>({...b}));
+  for(const m of nb){const z=Z('straight',[m]),key=zoneKey(z),ex=next.find((b)=>b.zone===key);if(ex){ex.stake+=denom;ex.call='neighbours';}else next.push({type:'straight',sel:[m],stake:denom,zone:key,call:'neighbours'});}
+  setFelt(next,`${n} and its neighbours, ${nb.join(' ')}`);
+}
+cv.addEventListener('mousemove',(ev)=>{const {x,y}=canvasXY(ev);hoverZone=zoneAt(x,y);const pk=hoverZone?null:pocketAt(x,y);hoverNb=pk==null?null:{n:pk,nb:neighbours(pk)};kbOn=false;cv.classList.toggle('hot',(!!hoverZone||!!hoverNb)&&!spinning);});
+cv.addEventListener('mouseleave',()=>{if(!kbOn)hoverZone=null;hoverNb=null;cv.classList.remove('hot');});
 cv.addEventListener('click',(ev)=>{
-  if(spinning||(mode==='tide'&&pending))return;
+  if(spinning){skipSpin();return;}
   const {x,y}=canvasXY(ev);
   const z=zoneAt(x,y);
-  if(!z)return;
+  if(!z){const pk=pocketAt(x,y);if(pk!=null){hoverZone=null;hoverNb={n:pk,nb:neighbours(pk)};clearTimeout(touchT);touchT=setTimeout(()=>{hoverNb=null;},1400);placeNeighbours(pk);}return;}
+  if(ev.pointerType==='touch'||ev.pointerType==='pen'){hoverZone=z;clearTimeout(touchT);touchT=setTimeout(()=>{if(!kbOn)hoverZone=null;},900);}
+  placeAt(z);
+});
+let touchT=null;
+const stakeOn=(key)=>bets.filter((b)=>b.zone===key).reduce((a,b)=>a+b.stake,0);
+function placeAt(z){
+  if(!spinning&&$('banner').style.display==='flex'){clearTimeout(bannerTimer);hideBanner();}
+  if(spinning)return;
+  if(broke()){flash('The purse is empty','Refit it with the gold button — 1,000 fresh doubloons.');return;}
   const key=zoneKey(z);
   if(denom===0){ // eraser: lift this spot
-    const before=bets.length;
-    bets=bets.filter(b=>b.zone!==key);
-    if(bets.length<before){chipSnd();}
+    const i=bets.findIndex((b)=>b.zone===key);
+    if(i<0){announce('No chips on '+betName(z)+'.');return;}
+    history.push({lift:bets[i],i});bets.splice(i,1);chipSnd();
+    announce(`Lifted ${betName(z)}. On the felt ${fmt(totalStaked())}.`);
   }else{
-    if(totalStaked()+denom>purse){showBanner('The purse is light','Practice money refloats on reload.');setTimeout(hideBanner,2000);return;}
+    if(stakeOn(key)+denom>1e9){flash('That’s the table limit','A single bet can hold up to 1,000,000,000.');return;}
+    if(totalStaked()+denom>purse){flash('The purse is light',`${fmt(purse)} in the purse, ${fmt(totalStaked())} already on the felt.`);return;}
     const ex=bets.find(b=>b.zone===key);
     if(ex)ex.stake+=denom;
     else bets.push({type:z.type,sel:z.sel,stake:denom,zone:key});
+    history.push({add:key,amt:denom});
     chipSnd();
+    announce(`${betName(z)}: ${fmt(stakeOn(key))} on it, pays ${PAYS[z.type]} to 1. On the felt ${fmt(totalStaked())}.`);
   }
   renderControls();
+}
+// keyboard: the arrows walk the felt from spot to spot
+let kbZone=null;
+function kbMove(dx,dy){
+  const from=kbZone||Z('straight',[17]);
+  let best=null,bs=1e9;
+  for(const z of ZONES){
+    const vx=z.x-from.x,vy=z.y-from.y,along=vx*dx+vy*dy,perp=Math.abs(vx*dy-vy*dx);
+    if(along<=2)continue;
+    const sc=along+perp*2.5;
+    if(sc<bs){bs=sc;best=z;}
+  }
+  if(best)kbGo(best);
+}
+function kbGo(z){kbZone=z;hoverZone=z;announce(`${betName(z)}, pays ${PAYS[z.type]} to 1${stakeOn(zoneKey(z))?', '+fmt(stakeOn(zoneKey(z)))+' on it':''}.`);}
+let digits='',digitT=null;
+let ptrDown=false;
+cv.addEventListener('pointerdown',()=>{ptrDown=true;setTimeout(()=>{ptrDown=false;},400);});
+cv.addEventListener('focus',()=>{if(ptrDown)return;kbOn=true;kbGo(kbZone||Z('straight',[17]));});
+cv.addEventListener('blur',()=>{kbOn=false;hoverZone=null;});
+cv.addEventListener('keydown',(ev)=>{
+  const k=ev.key;
+  const dir={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[k];
+  if(!/^[0-9]$/.test(k)&&!['Shift','Control','Alt','Meta','CapsLock','AltGraph'].includes(k)){digits='';clearTimeout(digitT);}
+  if(dir){ev.preventDefault();kbOn=true;
+    // phones stack the felt under the helm, but the felt itself keeps its orientation
+    kbMove(dir[0],dir[1]);return;}
+  if(k==='Enter'||k===' '){ev.preventDefault();ev.stopPropagation();if(spinning){skipSpin();return;}if(kbZone)placeAt(kbZone);return;}
+  if(/^[0-9]$/.test(k)){ev.preventDefault();ev.stopPropagation();digits=(digits+k).slice(-2);clearTimeout(digitT);digitT=setTimeout(()=>{digits='';},900);
+    let n=Number(digits);if(n>36){digits=k;n=Number(k);}const z=Z('straight',[n]);if(z)kbGo(z);return;}
+  if(k==='n'||k==='N'){ev.preventDefault();ev.stopPropagation();if(kbZone&&kbZone.type==='straight')placeNeighbours(kbZone.sel[0]);else announce('N works on a single number.');return;}
+  if(k==='Home'){ev.preventDefault();kbGo(Z('straight',[0]));return;}
+  if(k==='b'||k==='B'){ev.preventDefault();ev.stopPropagation();announce(bets.length?bets.map((b)=>`${betName(b)}: ${fmt(b.stake)}`).join(', ')+`. ${fmt(totalStaked())} in all.`:'The felt is empty.');return;}
+  if(k==='Delete'||k==='Backspace'){ev.preventDefault();if(!kbZone||spinning)return;const d=denom;denom=0;placeAt(kbZone);denom=d;return;}
 });
+function setDenom(d){
+  denom=d;
+  document.querySelectorAll('.denom').forEach(x=>{const on=Number(x.dataset.d)===d;x.classList.toggle('on',on);x.setAttribute('aria-pressed',String(on));});
+  $('chip-fab').innerHTML=d?`<small>chip</small>${d}`:'⌫';if(d)save('helm-chip',d);$('chip-fab').setAttribute('aria-label',`Chip ${d||'eraser'} — tap to change size`);
+}
+$('chip-fab').addEventListener('click',()=>{const seq=[1,5,25,100];setDenom(seq[(seq.indexOf(denom)+1)%seq.length]);tone(700,.06,.05);announce('Chip '+denom+'.');floaters.push({text:'chip '+denom,x:W/2,y:PORTRAIT?FY-60:H-30,color:'#ffe182',t0:performance.now()});});
 $('denoms').addEventListener('click',(e)=>{
   const b=e.target.closest('.denom');if(!b)return;
-  denom=Number(b.dataset.d);
-  document.querySelectorAll('.denom').forEach(x=>x.classList.toggle('on',x===b));
+  setDenom(Number(b.dataset.d));
   tone(700,.06,.05);
 });
-$('undo-btn').addEventListener('click',()=>{
-  const last=bets[bets.length-1];
-  if(!last)return;
-  last.stake-=denom>0?Math.min(denom,last.stake):last.stake;
-  if(last.stake<=0)bets.pop();
-  chipSnd();renderControls();
+// undo walks back exactly what you did, one action at a time
+function undo(){
+  const h=history.pop();if(!h||spinning)return;
+  if(h.add){const b=bets.find((x)=>x.zone===h.add);if(b){b.stake-=h.amt;if(b.stake<=0)bets.splice(bets.indexOf(b),1);}}
+  else if(h.lift)bets.splice(Math.min(h.i,bets.length),0,h.lift);
+  else if(h.was)bets=h.was;
+  chipSnd();announce(`Undone. On the felt ${fmt(totalStaked())}.`);renderControls();
+}
+function setFelt(next,why){
+  if(spinning)return false;
+  if(next.some((b)=>b.stake>1e9)){flash('That’s the table limit','A single bet can hold up to 1,000,000,000.');return false;}
+  const tot=next.reduce((a,b)=>a+b.stake,0);
+  if(tot>purse){flash('The purse is light',`${why} needs ${fmt(tot)}; the purse holds ${fmt(purse)}.`);return false;}
+  history.push({was:bets.map((b)=>({...b}))});bets=next;chipSnd();
+  announce(`${why}: ${fmt(tot)} across ${next.length} bet${next.length===1?'':'s'}.`);renderControls();return true;
+}
+function newGoals(start){
+  const up=Math.min(1e12,Math.max(1500,Math.ceil(start*1.5/50)*50));
+  return [{id:'straight',label:'hit a straight',done:false},{id:'call',label:'win on the wheel or a called bet',done:false},{id:'up',label:`reach ${fmt(up)}`,target:up,done:false}];
+}
+function readGoals(){
+  const g=load('helm-goals',null);
+  if(!Array.isArray(g)||g.length!==3)return null;
+  const byId=(id)=>g.filter((x)=>x&&x.id===id);
+  if(['straight','call','up'].some((id)=>byId(id).length!==1))return null;
+  const up=byId('up')[0];if(!isInt(up.target)||up.target<1||up.target>1e12)return null;
+  const fresh=newGoals(1000);fresh[2].target=up.target;fresh[2].label=`reach ${fmt(up.target)}`;
+  for(const f of fresh)f.done=byId(f.id)[0].done===true;
+  return fresh;
+}
+let goals=null,goalNote='',voyages=(()=>{const v=load('helm-voyages',0);return isInt(v)&&v>=0?v:0;})();
+function checkGoals(out){
+  goals??=readGoals()??newGoals(sess.best);goalNote='';const got=[];
+  const hit=(g)=>{if(!g.done){g.done=true;got.push(g.label);}};
+  for(const g of goals){
+    if(g.id==='straight'&&out.results.some((r)=>r.win&&r.type==='straight'))hit(g);
+    if(g.id==='call'&&out.results.some((r)=>r.win&&r.call))hit(g);
+    if(g.id==='up'&&purse>=g.target)hit(g);
+  }
+  {const disk=readGoals();if(disk)for(const g of goals){const d=disk.find((x)=>x.id===g.id&&x.target===g.target);if(d&&d.done)g.done=true;}}
+  if(got.length)goalNote=`Voyage goal${got.length>1?'s':''}: ${got.join(' · ')} ✓`;
+  save('helm-goals',goals);
+  if(goals.every((g)=>g.done)){goalNote='Voyage complete — a new one is charted ✓';setTimeout(bigWin,500);voyages++;save('helm-voyages',voyages);goals=newGoals(Math.max(purse,sess.best));save('helm-goals',goals);return;}
+  if(goalNote)setTimeout(winChime,500);
+}
+function renderGoals(){
+  goals??=readGoals()??newGoals(purse);
+  const n=goals.filter((g)=>g.done).length;
+  $('goals').innerHTML=`Voyage goals <b>${n}/3</b>: `+goals.map((g)=>`${g.done?'✓':'○'} ${esc(g.label)}`).join(' · ')+(voyages?` · voyages completed: <b>${voyages}</b>`:'');
+}
+const CALLS={
+  tiers:{name:'Tiers',bets:[['split',[5,8]],['split',[10,11]],['split',[13,16]],['split',[23,24]],['split',[27,30]],['split',[33,36]]]},
+  orph:{name:'Orphelins',bets:[['straight',[1]],['split',[6,9]],['split',[14,17]],['split',[17,20]],['split',[31,34]]]},
+  zero:{name:'Zero game',bets:[['split',[0,3]],['split',[12,15]],['split',[32,35]],['straight',[26]]]},
+};
+$('calls').addEventListener('click',(e)=>{
+  const bt=e.target.closest('[data-call]');if(!bt||spinning)return;
+  if(denom===0){flash('Pick a chip','Choose a chip size first — the eraser can’t call a bet.');return;}
+  const c=CALLS[bt.dataset.call],next=bets.map((b)=>({...b}));
+  for(const [type,sel] of c.bets){const z=Z(type,sel),key=zoneKey(z),ex=next.find((b)=>b.zone===key);if(ex){ex.stake+=denom;ex.call=c.name;}else next.push({type,sel,stake:denom,zone:key,call:c.name});}
+  setFelt(next,`${c.name} — ${bt.title.split(': ')[1]} — ${c.bets.length} chips of ${fmt(denom)}`);
 });
-$('clear-btn').addEventListener('click',()=>{bets=[];chipSnd();renderControls();});
-$('rebet-btn').addEventListener('click',()=>{
-  if(!lastBets||spinning)return;
-  const tot=lastBets.reduce((a,b)=>a+b.stake,0);
-  if(tot>purse)return;
-  bets=lastBets.map(b=>({...b}));chipSnd();renderControls();
-});
+$('undo-btn').addEventListener('click',undo);
+$('clear-btn').addEventListener('click',()=>{if(!bets.length||spinning)return;history.push({was:bets.map((b)=>({...b}))});bets=[];chipSnd();announce('The felt is clear.');renderControls();});
+$('rebet-btn').addEventListener('click',()=>{const rs=rebetSpread();if(rs)setFelt(rs.bets,rs.scaled?'Re-bet, scaled to your purse':'Re-bet');else if(lastBets)flash('The purse is empty','Refit it with the gold button.');});
+$('double-btn').addEventListener('click',()=>{const src=bets.length?bets:(lastMode===mode&&lastBets||[]);if(src.length)setFelt(src.map((b)=>({...b,zone:b.zone||zoneOfBet(b),stake:b.stake*2})),'Doubled');});
+$('quick-cb').addEventListener('change',(e)=>{quickPref=e.target.checked;save('helm-quick',quickPref);});
+let placing=false;
 $('spin-btn').addEventListener('click',async()=>{
-  if($('spin-btn').disabled)return;
+  if($('spin-btn').getAttribute('aria-disabled')==='true'){
+    if(!spinning&&!placing){if(mode==='tide'&&pending)announce('Your spread is already riding the tide.');else flash('Put a chip on the felt first','Tap a number, a box, or a pocket on the wheel.',2200);}
+    return;}
+  if(placing||spinning)return;
+  turnFocus=document.activeElement===$('spin-btn');
+  const m0=mode;
   ac().resume?.();
-  const tot=totalStaked();
-  if(tot>purse)return;
-  purse-=tot;save(LS.purse,purse);renderHeader();
-  if(mode==='tide'){try{await tideSpin();}catch{purse+=tot;save(LS.purse,purse);showBanner('The tide is out of reach','Could not reach the chain — your stake is returned.');setTimeout(hideBanner,2500);}}
-  else await practiceSpin();
+  if(mode==='tide'&&pending&&!spinning){setMode('practice');announce('Practice mode. Your tide spread is still riding.');return;}
+  if(broke()){
+    let ok=false;await withLedger(async()=>{if(purse<1&&!pending)ok=commit({purse:1000});});
+    if(ok){sess={spins:sess.spins,best:purse,bigWin:0,net:sess.net};goals=newGoals(purse);save('helm-goals',goals);lastBets=null;save(LS.last,null);flash('The purse is refitted','1,000 doubloons — fair winds.');}
+    else if(purse<1)flash('Could not save','This browser’s storage is full — free some space and try again.');
+    renderAll();return;
+  }
+  // a tide spread whose block may be in lands before the next practice spin
+  if(pending&&settler&&m0==='practice'&&Date.now()-lastSettleTry>8000){
+    lastSettleTry=Date.now();placing=true;turnCheck=true;renderControls();let landed=false;
+    try{landed=await Promise.race([trySettleTide(true).catch(()=>false),pause(1500).then(()=>false)]);}finally{placing=false;turnCheck=false;}
+    if(landed||spinning||placing||mode!==m0){renderControls();return;}
+  }
+  if(!bets.length){const rs=rebetSpread();if(rs)bets=rs.bets;}
+  const spread=bets.map((b)=>({...b})),tot=totalStaked(),m=mode;
+  if(!spread.length)return;
+  if(tot>purse){flash('The purse is light',`${fmt(tot)} on the felt, ${fmt(purse)} in the purse — lift some chips.`);return;}
+  placing=true;
+  let out=null;
+  try{
+    renderControls();
+    const tip=m==='tide'?(tipAt=0,await fetchTip()):null;
+    const seed=m==='tide'?null:await sha256hex('practice|'+randHex(16));
+    await withLedger(async()=>{
+      if(spinning)return;
+      if(tot>purse){flash('Not enough doubloons',`The purse holds ${fmt(purse)}.`);return;}
+      if(m==='tide'){
+        if(pending){flash('A spread is already riding','Another tab committed one to the tide — it lands first. Yours stays on the felt.');return;}
+        const height=tip+1,mark=randHex(16);   // a block nobody has seen
+        const p={height,mark,bets:spread.map((b)=>({type:b.type,sel:b.sel,stake:b.stake})),placedAt:Date.now(),chain:CHAIN};
+        if(!commit({pending:p,purse:purse-tot})){flash('Could not save','This browser’s storage is full — nothing was staked.',5000);return;}
+        lastBets=spread.map((b)=>({...b}));save(LS.last,lastBets);lastMode='tide';save('helm-lastmode',lastMode);bets=[];history=[];
+        flash('The helm waits on the tide',`Your ${fmt(tot)} rides block <b>${fmt(height)}</b>. It needs 2 more blocks (~20 min): that one, and one to confirm it. Practice meanwhile.`,5000);
+        return;
+      }
+      try{out=bookSpin(spread,seed,null,{debit:tot});veil={n:spinN,ret:out.totalReturn};}catch{flash('Could not save','This browser’s storage is full — nothing was staked.',5000);out=null;}
+    });
+  }catch(err){flash('The tide is out of reach',(/oddly/.test(err&&err.message)?'The chain answered oddly':'Could not reach the chain')+' — nothing was staked. Try again in a moment.',3500);}
+  finally{placing=false;if(!out)readState();renderAll();if(pending)watchTide();if(!out)afterBusy();}
+  if(out)doSpin(spread,out);
 });
-$('m-practice').addEventListener('click',()=>{mode='practice';$('m-practice').classList.add('on');$('m-tide').classList.remove('on');renderControls();});
-$('m-tide').addEventListener('click',()=>{mode='tide';$('m-tide').classList.add('on');$('m-practice').classList.remove('on');fetchTip().catch(()=>{});renderControls();});
+function setMode(m){
+  if(spinning||placing){announce('The helm is turning — switch when it lands.');return;}
+  mode=m;
+  for(const [id,on] of [['m-practice',m==='practice'],['m-tide',m==='tide']]){$(id).classList.toggle('on',on);$(id).setAttribute('aria-pressed',String(on));}
+  if(m==='tide')fetchTip().then(renderControls,()=>{chainOffline=true;renderControls();});
+  renderControls();
+}
+$('m-practice').addEventListener('click',()=>setMode('practice'));
+$('m-tide').addEventListener('click',()=>setMode('tide'));
+// the keys: T turns, R re-bets, U undoes, Space skips a spin
+addEventListener('keydown',(ev)=>{
+  if(ev.ctrlKey||ev.metaKey||ev.altKey)return;
+  const t=ev.target,typing=t&&((t.tagName==='INPUT'&&t.type!=='checkbox')||t.tagName==='TEXTAREA'||t.isContentEditable);
+  if(typing)return;
+  const k=ev.key.toLowerCase();
+  if(k===' '&&spinning){if(skipSpin())ev.preventDefault();return;}
+  if(t&&t.tagName==='BUTTON'&&(k===' '||k==='enter'))return;
+  if(k==='t'){ev.preventDefault();$('spin-btn').click();}
+  else if(k==='r')$('rebet-btn').click();
+  else if(k==='u')undo();
+});
+addEventListener('visibilitychange',()=>{if(!document.hidden)document.title=TITLE;});
+const TITLE=document.title;
 $('sound-btn').addEventListener('click',()=>{soundOn=!soundOn;save(LS.sound,soundOn);renderHeader();});
 
-// deterministic demo hook for the critics
+// deterministic hooks for testing: only with ?debug
+if(new URLSearchParams(location.search).has('debug')){
 window.__bet=(type,sel,stake)=>{const z=ZONES.find(z=>z.type===type&&JSON.stringify(z.sel)===JSON.stringify(sel));
   if(!z)return 'no zone';bets.push({type,sel,stake,zone:zoneKey(z)});renderControls();return 'ok';};
-window.__spin=async(seed)=>{const tot=totalStaked();purse-=tot;save(LS.purse,purse);await doSpin(seed);return 'spun';};
+window.__spin=async(seed)=>{const spread=bets.map(b=>({...b})),tot=totalStaked();let out=null;await withLedger(async()=>{out=bookSpin(spread,seed,null,{debit:tot});});veil={n:spinN,ret:out.totalReturn};doSpin(spread,out);return 'spun';};
+}
 
+addEventListener('storage',(e)=>{
+  if((e.key==='helm-purse'||e.key==='helm-pending')&&!oldNag){oldNag=true;showBanner('An older Helm is open','Another tab runs the previous version of this page — close it; spins there won’t count here.');setTimeout(hideBanner,6000);return;}
+  if(!e.key||(e.key!==LS.ledger&&e.key!==LS.legacyPending)||spinning||placing)return;
+  readState();
+  const h=log[0];   // a tide spin another tab just settled plays here too
+  if(h&&h.mode==='tide'&&h.bets&&h.n>bootN&&!replayed.has(h.n)){replaySettled(h.n).catch(()=>{});return;}
+  renderAll();if(pending)watchTide();
+});
+let oldNag=false;
 /* boot */
 let lastNumberBoot=load('helm-lastnum',null);
-lastNumber=lastNumberBoot;
-if(purse<1&&!pending){purse=1000;save(LS.purse,purse);}
+lastNumber=isInt(lastNumberBoot)&&lastNumberBoot>=0&&lastNumberBoot<POCKETS?lastNumberBoot:null;
+bootN=spinN;
+setDenom(denom);
+if(mangled||adoptable||ledgerBroken)withLedger(async()=>{
+  if(ledgerBroken){if(commit({purse:1000,log:[],n:0,pending:null}))flash('The ledger couldn’t be read','Something damaged this browser’s copy — the helm starts again with a fresh purse.',6000);return;}
+  if(mangled){const t=mangled.t;if(commit({purse:Math.min(1e12,purse+t),pending:null}))flash('A damaged tide spread',t?'It couldn’t be read, so its '+fmt(t)+' is back in the purse.':'It couldn’t be read, and no stake could be recovered from it.',6000);}
+  if(adoptable&&!pending){const lp=adoptable;if(commit({pending:lp}))save(LS.legacyPending,null);}
+}).then(()=>{renderAll();if(pending)watchTide();},()=>{});
+setGeometry();
+narrowQ.addEventListener('change',()=>{setGeometry();kbZone=null;hoverZone=null;});
+setInterval(()=>{if(pending&&mode==='tide')renderControls();},15000);
 renderAll();
-fetchTip().catch(()=>{});
+fetchTip().catch(()=>{chainOffline=true;if($('tide-height').textContent==='…')$('tide-height').textContent='offline';renderControls();});
 if(pending)watchTide();
 </script>
 </body>
